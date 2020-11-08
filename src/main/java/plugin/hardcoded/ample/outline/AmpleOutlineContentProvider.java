@@ -100,7 +100,7 @@ public class AmpleOutlineContentProvider implements ITreeContentProvider, ILabel
 	
 	private Image defaultImage;
 	public Image getImage(Object element) {
-		return AmplePreferences.getImage(AmplePreferences.AMPLE_OUTLINE_BLOB);
+		return AmplePreferences.getImage(AmplePreferences.OUTLINE_BLOB);
 	}
 
 	public void dispose() {

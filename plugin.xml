@@ -25,7 +25,7 @@
 		<editor
 				name="Ample Syntax Editor"
 				extensions="ample"
-				icon="icons/ample_file.png"
+				icon="icons/ample_sourcefile.png"
 				id="ample_editor"
 				class="plugin.hardcoded.ample.views.AmpleSyntaxEditor">
 		</editor>
@@ -38,17 +38,17 @@
 	</extension>
 	
 	<extension point="org.eclipse.ui.newWizards">
+    <category
+          id="plugin.hardcoded.ample.wizard"
+          name="Ample">
+    </category>
 		<wizard
 				category="plugin.hardcoded.ample.wizard"
 				class="plugin.hardcoded.ample.wizard.AmplePluginWizard"
-				icon="icons/ample_file.png"
+				icon="icons/ample_sourcefile.png"
 				id="ample_wizard"
 				name="Ample Project">
 		</wizard>
-		<category
-				id="plugin.hardcoded.ample.wizard"
-				name="Ample">
-		</category>
 	</extension>
  <extension
        point="org.eclipse.core.contenttype.contentTypes">

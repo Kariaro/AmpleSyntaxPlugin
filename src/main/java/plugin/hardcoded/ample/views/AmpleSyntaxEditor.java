@@ -155,7 +155,8 @@ public class AmpleSyntaxEditor extends TextEditor implements IDocumentListener {
 		try {
 			resource.deleteMarkers(null, true, IResource.DEPTH_INFINITE);
 		} catch(CoreException e) {
-			e.printStackTrace();
+			// TODO: Wait until we can perform the parse tree update.
+			return;
 		}
 		
 		SafeRunner.run(() -> {

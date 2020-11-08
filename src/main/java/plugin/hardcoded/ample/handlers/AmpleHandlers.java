@@ -19,7 +19,7 @@ public class AmpleHandlers {
 	public static class AddSourceFolder extends DefaultHandler {
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			IFolder folder = getFirstElement(HandlerUtil.getCurrentSelection(event), IFolder.class);
-			if(folder == null) return null;
+			if(!AmpleCore.partOfAmpleProject(folder)) return null;
 			
 			AmpleProject project = AmpleCore.getAmpleProject(folder);
 			List<IFolder> list = project.getSourceFolders();
@@ -33,6 +33,7 @@ public class AmpleHandlers {
 		
 		protected boolean validateEnabled(ISelection selection) {
 			IFolder folder = getFirstElement(selection, IFolder.class);
+			if(!AmpleCore.partOfAmpleProject(folder)) return false;
 			return folder != null && !AmpleCore.isSourceFolder(folder);
 		}
 	}
@@ -40,7 +41,7 @@ public class AmpleHandlers {
 	public static class RemoveSourceFolder extends DefaultHandler {
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			IFolder folder = getFirstElement(HandlerUtil.getCurrentSelection(event), IFolder.class);
-			if(folder == null) return null;
+			if(!AmpleCore.partOfAmpleProject(folder)) return null;
 			
 			AmpleProject project = AmpleCore.getAmpleProject(folder);
 			List<IFolder> list = project.getSourceFolders();
@@ -54,6 +55,7 @@ public class AmpleHandlers {
 		
 		protected boolean validateEnabled(ISelection selection) {
 			IFolder folder = getFirstElement(selection, IFolder.class);
+			if(!AmpleCore.partOfAmpleProject(folder)) return false;
 			return AmpleCore.isSourceFolder(folder);
 		}
 	}

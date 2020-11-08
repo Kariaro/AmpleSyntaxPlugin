@@ -14,6 +14,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.w3c.dom.*;
 
 import plugin.hardcoded.ample.AmpleLogger;
@@ -25,14 +26,6 @@ public class AmpleConfiguration {
 	protected Element sources;
 	protected Element libraries;
 	private final IFile file;
-	
-//	protected AmpleDocument(AmpleProject project) {
-//		this(project, null, false);
-//	}
-//	
-//	protected AmpleDocument(AmpleProject project, IFile file) {
-//		this(project, file, file != null && file.exists());
-//	}
 	
 	protected AmpleConfiguration(AmpleProject project, String path) {
 		Assert.isNotNull(project);
@@ -176,9 +169,17 @@ public class AmpleConfiguration {
 		try(FileOutputStream stream = new FileOutputStream(file.getLocation().toOSString())) {
 			stream.write(toXMLString().getBytes());
 		} catch(TransformerException e) {
-			
+			AmpleLogger.log(e);
 		} catch(IOException e) {
-			
+			AmpleLogger.log(e);
+		}
+	}
+
+	protected void remove() {
+		try {
+			file.delete(true, null);
+		} catch(CoreException e) {
+			AmpleLogger.log(e);
 		}
 	}
 }

@@ -57,7 +57,7 @@ public class AmplePropertyPage extends PropertyPage implements IWorkbenchPropert
 	private void addLibraryTab(TabFolder folder) {
 		TabItem tab_item = new TabItem(folder, SWT.NONE);
 		tab_item.setText("Libraries");
-		tab_item.setImage(AmplePreferences.getImage(AmplePreferences.AMPLE_LIBRARY_ICON));
+		tab_item.setImage(AmplePreferences.getImage(AmplePreferences.LIBRARY_ICON));
 		
 		Composite panel = new Composite(folder, SWT.NONE);
 		panel.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -72,7 +72,7 @@ public class AmplePropertyPage extends PropertyPage implements IWorkbenchPropert
 	private void addSourceFolderTab(TabFolder folder) {
 		TabItem tab_item = new TabItem(folder, SWT.NONE);
 		tab_item.setText("Source folders");
-		tab_item.setImage(AmplePreferences.getImage(AmplePreferences.AMPLE_SOURCE_FOLDER));
+		tab_item.setImage(AmplePreferences.getImage(AmplePreferences.SOURCE_FOLDER));
 		
 		Composite panel = new Composite(folder, SWT.NONE);
 		panel.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -118,10 +118,10 @@ public class AmplePropertyPage extends PropertyPage implements IWorkbenchPropert
 					TableItem item = new TableItem(table, SWT.NONE);
 					item.setText(path.getProjectRelativePath().toString());
 					if(path.exists()) {
-						item.setImage(AmplePreferences.getImage(AmplePreferences.AMPLE_SOURCE_FOLDER));
+						item.setImage(AmplePreferences.getImage(AmplePreferences.SOURCE_FOLDER));
 					} else {
 						item.setImage(AmplePreferences.getOverlayImage(
-							AmplePreferences.AMPLE_SOURCE_FOLDER,
+							AmplePreferences.SOURCE_FOLDER,
 							ISharedImages.IMG_DEC_FIELD_WARNING,
 							IDecoration.BOTTOM_RIGHT
 						));
@@ -217,7 +217,7 @@ public class AmplePropertyPage extends PropertyPage implements IWorkbenchPropert
 							if(object instanceof IFolder) {
 								IFolder folder = (IFolder)object;
 								TableItem item = new TableItem(sourceFolderTable.getTable(), SWT.NONE);
-								item.setImage(AmplePreferences.getImage(AmplePreferences.AMPLE_SOURCE_FOLDER));
+								item.setImage(AmplePreferences.getImage(AmplePreferences.SOURCE_FOLDER));
 								item.setText(folder.getProjectRelativePath().toString());
 								sourceFolders.add(folder);
 							}

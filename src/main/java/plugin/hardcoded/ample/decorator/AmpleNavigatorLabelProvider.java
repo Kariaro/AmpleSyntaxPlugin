@@ -10,7 +10,7 @@ import plugin.hardcoded.ample.core.items.IAmpleLibrary;
 public class AmpleNavigatorLabelProvider implements ILabelProvider {
 	public Image getImage(Object element) {
 		if(element instanceof IAmpleLibrary) {
-			return AmplePreferences.getImage(AmplePreferences.AMPLE_LIBRARY_ICON);
+			return AmplePreferences.getImage(AmplePreferences.LIBRARY_ICON);
 		}
 		
 		return null;

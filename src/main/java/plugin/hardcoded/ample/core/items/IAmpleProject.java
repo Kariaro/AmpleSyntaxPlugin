@@ -14,6 +14,6 @@ public interface IAmpleProject extends IAmpleElement {
 	
 	@Override
 	default Image getIcon() {
-		return AmplePreferences.getImage(AmplePreferences.AMPLE_PROJECT_ICON);
+		return AmplePreferences.getImage(AmplePreferences.PROJECT_ICON);
 	}
 }

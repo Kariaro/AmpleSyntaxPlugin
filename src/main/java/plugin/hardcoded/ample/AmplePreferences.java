@@ -17,24 +17,26 @@ public class AmplePreferences {
 	// TODO: Color cache.
 	
 	private static Map<ImageDescriptor, Image> cached_images = new HashMap<>();
-	public static final ImageDescriptor AMPLE_PROJECT_DECAL		= getResourceImage("icons/ample_projectdecal.png");
-	public static final ImageDescriptor AMPLE_EMPTY_FILE_ICON	= getResourceImage("icons/ample_file_empty.png");
-	public static final ImageDescriptor AMPLE_OUTLINE_BLOB		= getResourceImage("icons/ample_outline_blob_2.png");
+	public static final ImageDescriptor PROJECT_DECAL			= getResourceImage("icons/ample_projectdecal.png");
+	public static final ImageDescriptor EMPTY_FILE_ICON			= getResourceImage("icons/ample_file_empty.png");
+	public static final ImageDescriptor OUTLINE_BLOB			= getResourceImage("icons/ample_outline_blob_2.png");
 	
-	public static final ImageDescriptor AMPLE_PROJECT_ICON		= getResourceImage("icons/ample_projecticon.png");
-	public static final ImageDescriptor AMPLE_LIBRARY_ICON		= getResourceImage("icons/ample_libraryicon.png");
-	public static final ImageDescriptor AMPLE_SOURCE_FILE		= getResourceImage("icons/ample_sourcefile.png");
-	public static final ImageDescriptor AMPLE_SOURCE_FOLDER		= getResourceImage("icons/ample_sourcefolder.png");
-	public static final ImageDescriptor AMPLE_SOURCE_PACKAGE	= getResourceImage("icons/ample_sourcepackage.png");
+	public static final ImageDescriptor PROJECT_ICON			= getResourceImage("icons/ample_projecticon.png");
+	public static final ImageDescriptor LIBRARY_ICON			= getResourceImage("icons/ample_libraryicon.png");
+	public static final ImageDescriptor SOURCE_FILE				= getResourceImage("icons/ample_sourcefile.png");
+	public static final ImageDescriptor SOURCE_FILE_DISABLED	= getResourceImage("icons/ample_sourcefile_disabled.png");
+	public static final ImageDescriptor SOURCE_FOLDER			= getResourceImage("icons/ample_sourcefolder.png");
+	public static final ImageDescriptor SOURCE_PACKAGE			= getResourceImage("icons/ample_sourcepackage.png");
 	
 	static void dispose() {
-		for(Image image : cached_images.values()) {
-			image.dispose();
-		}
-		
-		for(Image image : cached_overlay.values()) {
-			image.dispose();
-		}
+		// We don't need to dispose any of these probably :s
+//		for(Image image : cached_images.values()) {
+//			image.dispose();
+//		}
+//		
+//		for(Image image : cached_overlay.values()) {
+//			image.dispose();
+//		}
 	}
 	
 	public static Image getImage(ImageDescriptor descriptor) {

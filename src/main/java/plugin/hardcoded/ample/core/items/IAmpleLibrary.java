@@ -13,6 +13,6 @@ public interface IAmpleLibrary extends IAmpleElement {
 	
 	@Override
 	default Image getIcon() {
-		return AmplePreferences.getImage(AmplePreferences.AMPLE_LIBRARY_ICON);
+		return AmplePreferences.getImage(AmplePreferences.LIBRARY_ICON);
 	}
 }

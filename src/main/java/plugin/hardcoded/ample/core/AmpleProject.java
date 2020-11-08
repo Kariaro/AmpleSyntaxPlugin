@@ -50,7 +50,14 @@ public class AmpleProject implements IAmpleProject, IProjectNature {
 	
 	public void deconfigure() throws CoreException {
 		System.out.println("Deconfigure: " + project);
-		// TODO: Remove the project configuration file.
+		
+		try {
+			// Initialize the configuration
+			config = getConfiguration();
+			config.remove();
+		} catch(Exception e) {
+			
+		}
 	}
 	
 	public AmpleConfiguration getConfiguration() {
@@ -95,7 +102,6 @@ public class AmpleProject implements IAmpleProject, IProjectNature {
 	public boolean hasSourceFolder(IFolder folder) {
 		List<String> list = getConfiguration().getSourceFolders();
 		String path = folder.getProjectRelativePath().toString();
-		System.out.println(path + " //// " + list);
 		return list.contains(path);
 	}
 	
