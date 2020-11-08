@@ -1,59 +1,57 @@
 package plugin.hardcoded.ample.decorator;
 
-import java.util.List;
+import java.util.Set;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.navigator.CommonViewer;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.navigator.*;
 
 import plugin.hardcoded.ample.core.AmpleCore;
+import plugin.hardcoded.ample.core.AmpleProject;
 
-public class AmpleNavigatorContentProvider extends AmpleElementContentProvider implements IResourceChangeListener {
-	private Viewer viewer;
+@SuppressWarnings("rawtypes")
+public class AmpleNavigatorContentProvider extends DefaultContentProvider implements IPipelinedTreeContentProvider {
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+	public void init(ICommonContentExtensionSite config) {}
+	public void restoreState(IMemento memento) {}
+	public void saveState(IMemento memento) {}
 	
-	public AmpleNavigatorContentProvider() {
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
+	public void getPipelinedElements(Object input, Set elements) {
+		if(input instanceof IWorkspaceRoot) {
+			// Update all decorators to look better
+			AmpleIconDecorator.refreshIcons();
+		}
 	}
 	
-	public Object[] getElements(Object element) {
-		return getChildren(element);
+	@SuppressWarnings("unchecked")
+	public void getPipelinedChildren(Object parent, Set children) {
+		if(parent instanceof IProject) {
+			if(AmpleCore.partOfAmpleProject((IProject)parent)) {
+				AmpleProject project = AmpleCore.getAmpleProject((IProject)parent);
+				children.add(project.getLibrary());
+			}
+		}
 	}
 	
-	public Object[] getChildren(Object element) {
-		if(element instanceof IProject)
-			return super.getElements(AmpleCore.getAmpleProject((IProject)element));
-		
-		return super.getElements(element);
-	}
-	
-	public Object getParent(Object element) {
+	public Object getPipelinedParent(Object object, Object suggestedParent) {
 		return null;
 	}
 	
-	public boolean hasChildren(Object element) {
-		Object[] array = getElements(element);
-		return array.length > 0;
+	public PipelinedShapeModification interceptAdd(PipelinedShapeModification addModification) {
+		return null;
 	}
 	
-	public void dispose() {
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+	public PipelinedShapeModification interceptRemove(PipelinedShapeModification removeModification) {
+		return null;
 	}
 	
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		this.viewer = viewer;
-		
-		//CommonViewer v = this.viewer;
-		// v.add(v.getInput(), "Object1", "Object2", "Object3");
-		
-		System.out.printf("Viewer: [%s], [%s]\n", viewer, (viewer != null ? viewer.getClass():"<NULL OBJECT>"));
+	public boolean interceptRefresh(PipelinedViewerUpdate refreshSynchronization) {
+		return false;
 	}
 	
-	public void resourceChanged(IResourceChangeEvent event) {
-		// Can update
-//		Display.getDefault().asyncExec(() -> {
-//			viewer.refresh();
-//		});
+	public boolean interceptUpdate(PipelinedViewerUpdate updateSynchronization) {
+		return false;
 	}
 }

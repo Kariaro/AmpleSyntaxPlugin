@@ -13,7 +13,7 @@ public final class AmpleLogger {
 		AmpleSyntaxPlugin.getDefault().getLog().log(new LoggerStatus(IStatus.INFO, String.format(format, args)));
 	}
 	
-	public static void logError(Throwable t) {
+	public static void log(Throwable t) {
 		AmpleSyntaxPlugin.getDefault().getLog().log(new LoggerStatus(IStatus.ERROR, t));
 	}
 	

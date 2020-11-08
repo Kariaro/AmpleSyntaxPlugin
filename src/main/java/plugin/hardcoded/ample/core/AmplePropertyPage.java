@@ -6,27 +6,26 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import plugin.hardcoded.ample.AmplePreferences;
+import plugin.hardcoded.ample.decorator.AmpleIconDecorator;
 
 public class AmplePropertyPage extends PropertyPage implements IWorkbenchPropertyPage {
 	private AmpleProject project;
 	private java.util.List<IFolder> sourceFolders = new ArrayList<>();
 	
-	// TODO: Save the properties to the projects .aproj
 	private TableViewer sourceFolderTable;
 	private Button up_button;
 	private Button down_button;
@@ -35,6 +34,9 @@ public class AmplePropertyPage extends PropertyPage implements IWorkbenchPropert
 	protected Control createContents(Composite parent) {
 		try {
 			project = AmpleCore.getAmpleProject(getElement());
+			if(project == null)
+				throw new NullPointerException("AmpleProject was null");
+			
 		} catch(Exception e) {
 			Label error = new Label(parent, SWT.NONE);
 			StringWriter sw = new StringWriter();
@@ -47,14 +49,30 @@ public class AmplePropertyPage extends PropertyPage implements IWorkbenchPropert
 		folder.setLayoutData(new GridData(GridData.FILL_BOTH));
 		folder.setLayout(new GridLayout());
 		addSourceFolderTab(folder);
+		addLibraryTab(folder);
 		
 		return folder;
 	}
+	
+	private void addLibraryTab(TabFolder folder) {
+		TabItem tab_item = new TabItem(folder, SWT.NONE);
+		tab_item.setText("Libraries");
+		tab_item.setImage(AmplePreferences.getImage(AmplePreferences.AMPLE_LIBRARY_ICON));
+		
+		Composite panel = new Composite(folder, SWT.NONE);
+		panel.setLayoutData(new GridData(GridData.FILL_BOTH));
+		panel.setLayout(new GridLayout());
+		tab_item.setControl(panel);
+		
 
-	// TODO: Add project errors if a source folder is missing
+		Label label = new Label(panel, SWT.NONE);
+		label.setText("Add a library import screen!");
+	}
+	
 	private void addSourceFolderTab(TabFolder folder) {
 		TabItem tab_item = new TabItem(folder, SWT.NONE);
 		tab_item.setText("Source folders");
+		tab_item.setImage(AmplePreferences.getImage(AmplePreferences.AMPLE_SOURCE_FOLDER));
 		
 		Composite panel = new Composite(folder, SWT.NONE);
 		panel.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -96,13 +114,29 @@ public class AmplePropertyPage extends PropertyPage implements IWorkbenchPropert
 				columnViewer.getColumn().setResizable(false);
 				columnViewer.getColumn().setText("");
 				
-				AmpleDocument doc = project.getDocument();
-				for(String str : doc.getSourceFolders()) {
+				for(IFolder path : project.getSourceFolders()) {
 					TableItem item = new TableItem(table, SWT.NONE);
-					item.setText(str);
-					item.setImage(AmplePreferences.getImage(AmplePreferences.AMPLE_SOURCE_FOLDER));
+					item.setText(path.getProjectRelativePath().toString());
+					if(path.exists()) {
+						item.setImage(AmplePreferences.getImage(AmplePreferences.AMPLE_SOURCE_FOLDER));
+					} else {
+						item.setImage(AmplePreferences.getOverlayImage(
+							AmplePreferences.AMPLE_SOURCE_FOLDER,
+							ISharedImages.IMG_DEC_FIELD_WARNING,
+							IDecoration.BOTTOM_RIGHT
+						));
+						
+						// TODO: Notify the user that the source folder is missing!
+//						try {
+//							IMarker marker = project.getProject().createMarker(IMarker.PROBLEM);
+//							marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+//							marker.setAttribute(IMarker.MESSAGE, "The source folder '" + item.getText() + "' is missing");
+//						} catch(CoreException e) {
+//							AmpleLogger.log(e);
+//						}
+					}
 					
-					sourceFolders.add(project.getProject().getFolder(str));
+					sourceFolders.add(path);
 				}
 			}
 			
@@ -124,11 +158,7 @@ public class AmplePropertyPage extends PropertyPage implements IWorkbenchPropert
 						int index = table.getSelectionIndex();
 						if(index < 1) return;
 						
-						TableItem t0 = table.getItem(index);
-						TableItem t1 = table.getItem(index - 1);
-						String old = t0.getText();
-						t0.setText(t1.getText());
-						t1.setText(old);
+						swapItem(table, index, index - 1);
 						table.select(index - 1);
 						
 						{
@@ -153,11 +183,7 @@ public class AmplePropertyPage extends PropertyPage implements IWorkbenchPropert
 						int count = table.getItemCount();
 						if(index > count - 1) return;
 						
-						TableItem t0 = table.getItem(index);
-						TableItem t1 = table.getItem(index + 1);
-						String old = t0.getText();
-						t0.setText(t1.getText());
-						t1.setText(old);
+						swapItem(table, index, index + 1);
 						table.select(index + 1);
 						
 						{
@@ -181,7 +207,7 @@ public class AmplePropertyPage extends PropertyPage implements IWorkbenchPropert
 							new WorkbenchLabelProvider(),
 							new AmpleProjectFolderContentProvider(sourceFolders)
 						);
-						dlg.setInput(getProject());
+						dlg.setInput((IProject)getElement());
 						dlg.setMessage("Add a new source folder");
 						dlg.setTitle("Add source folder");
 						
@@ -192,7 +218,7 @@ public class AmplePropertyPage extends PropertyPage implements IWorkbenchPropert
 								IFolder folder = (IFolder)object;
 								TableItem item = new TableItem(sourceFolderTable.getTable(), SWT.NONE);
 								item.setImage(AmplePreferences.getImage(AmplePreferences.AMPLE_SOURCE_FOLDER));
-								item.setText(folder.getName());
+								item.setText(folder.getProjectRelativePath().toString());
 								sourceFolders.add(folder);
 							}
 						}
@@ -236,9 +262,21 @@ public class AmplePropertyPage extends PropertyPage implements IWorkbenchPropert
 		}
 	}
 	
+	private void swapItem(Table table, int from, int to) {
+		TableItem a = table.getItem(from);
+		TableItem b = table.getItem(to);
+		
+		String a_string = a.getText();
+		Image a_image = a.getImage();
+		
+		a.setImage(b.getImage());
+		a.setText(b.getText());
+		b.setImage(a_image);
+		b.setText(a_string);
+	}
+	
 	private void updateArrowButtonSourcePage() {
 		Table table = sourceFolderTable.getTable();
-		
 		int index = table.getSelectionIndex();
 		int count = table.getItemCount();
 		
@@ -251,18 +289,13 @@ public class AmplePropertyPage extends PropertyPage implements IWorkbenchPropert
 		super.performApply();
 		
 		try {
-			AmpleDocument doc = project.getDocument();
+			AmpleConfiguration doc = project.getConfiguration();
 			doc.updateSourceFolders(sourceFolders);
 			project.saveDocument();
 			
-			// TODO: Does this update the project?
-			project.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
+			AmpleIconDecorator.refreshIcons();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-	}
-	
-	private IProject getProject() {
-		return (IProject)getElement();
 	}
 }

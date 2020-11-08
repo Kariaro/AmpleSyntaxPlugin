@@ -15,7 +15,6 @@ public class AmpleDefaultProject {
 	
 	public static boolean createDefaultProject(IProject project) throws CoreException {
 		// Sometimes the resource exists but is not shown inside eclipse
-		// TODO:
 		if(project.exists()) return false;
 		
 		IProgressMonitor progressMonitor = new NullProgressMonitor();

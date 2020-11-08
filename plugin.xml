@@ -12,6 +12,15 @@
      </run>
   </runtime>
 	</extension>
+	
+	<extension
+	       point="org.eclipse.ui.ide.projectNatureImages">
+	    <image
+	          icon="icons/ample_projectdecal.png"
+	          id="plugin.hardcoded.ample.core.amplenature.icon"
+	          natureId="plugin.hardcoded.ample.core.amplenature">
+	    </image>
+	</extension>
 	<extension point="org.eclipse.ui.editors">
 		<editor
 				name="Ample Syntax Editor"
@@ -41,15 +50,13 @@
 				name="Ample">
 		</category>
 	</extension>
-	
-	<extension
-	       point="org.eclipse.ui.ide.projectNatureImages">
-	    <image
-	          icon="icons/ample_projectdecal.png"
-	          id="plugin.hardcoded.ample.core.amplenature.icon"
-	          natureId="plugin.hardcoded.ample.core.amplenature">
-	    </image>
-	</extension>
+ <extension
+       point="org.eclipse.core.contenttype.contentTypes">
+    <file-association
+          content-type="org.eclipse.core.runtime.xml"
+          file-names=".aproj">
+    </file-association>
+ </extension>
 	
 	<extension point="org.eclipse.ui.commands">
 		<command
@@ -159,11 +166,12 @@
  <extension
        point="org.eclipse.ui.decorators">
     <decorator
-          class="plugin.hardcoded.ample.decorator.AmpleSourceFolderDecorator"
-          icon="icons/ample_sourcefolder.png"
-          id="plugin.hardcoded.ample.decorator.source"
-          label="Source Folder"
-          lightweight="true">
+          class="plugin.hardcoded.ample.decorator.AmpleIconDecorator"
+          id="plugin.hardcoded.ample.decorator.icons"
+          label="Ample Icon Decorator"
+          lightweight="true"
+          location="REPLACE"
+          state="true">
     </decorator>
  </extension>
  <extension
@@ -175,8 +183,7 @@
           id="plugin.hardcoded.ample.ampleContent"
           labelProvider="plugin.hardcoded.ample.decorator.AmpleNavigatorLabelProvider"
           name="Ample Elements"
-          priority="high"
-          sortOnly="false">
+          priority="normal">
        <triggerPoints>
          <or>
             <adapt
@@ -186,16 +193,8 @@
                      value="plugin.hardcoded.ample.core.amplenature">
                </test>
             </adapt>
-			<instanceof value="org.eclipse.core.resources.IResource" /> 
-            <instanceof value="plugin.hardcoded.ample.core.items.IAmpleElement" />
           </or>
        </triggerPoints>
-       <possibleChildren>
-          <or>
-			<instanceof value="org.eclipse.core.resources.IResource" /> 
-            <instanceof value="plugin.hardcoded.ample.core.items.IAmpleElement" />
-          </or>
-       </possibleChildren>
        <override
              policy="InvokeAlwaysRegardlessOfSuppressedExt"
              suppressedExtensionId="org.eclipse.ui.navigator.resourceContent">
@@ -212,96 +211,58 @@
           </contentExtension>
        </includes>
     </viewerContentBinding>
-    <viewerContentBinding
-          viewerId="org.eclipse.team.cvs.ui.workspaceSynchronization">
-       <includes>
-          <contentExtension
-                pattern="plugin.hardcoded.ample.ampleModelContent">
-          </contentExtension></includes>
-    </viewerContentBinding>
  </extension>
  <extension
-       id="modelProvider"
-       name="AmpleModelProvider"
-       point="org.eclipse.core.resources.modelProviders">
-    <modelProvider
-          class="plugin.hardcoded.ample.mapping.AmpleModelProvider">
-    </modelProvider>
-    <extends-model
-          id="org.eclipse.core.resources.modelProvider">
-    </extends-model>
-    <enablement>
-      <test property="org.eclipse.core.resources.projectNature" value="plugin.hardcoded.ample.core.amplenature" />
-   </enablement>
+       point="org.eclipse.ui.commands">
+    <command
+          id="plugin.hardcoded.ample.command.addSourceFolder"
+          name="Add source folder">
+    </command>
+    <command
+          id="plugin.hardcoded.ample.command.removeSourceFolder"
+          name="Remove source folder">
+    </command>
  </extension>
  <extension
-       point="org.eclipse.core.runtime.adapters">
-    <factory
-          adaptableType="plugin.hardcoded.ample.core.items.IAmpleElement"
-          class="plugin.hardcoded.ample.mapping.AmpleElementAdapterFactory">
-       <adapter
-             type="org.eclipse.core.resources.IResource">
-       </adapter>
-    </factory>
-    <factory
-          adaptableType="plugin.hardcoded.ample.core.items.IAmpleProject"
-          class="plugin.hardcoded.ample.mapping.AmpleProjectAdapterFactory">
-       <adapter
-             type="org.eclipse.core.resources.IProject">
-       </adapter>
-    </factory>
-    <factory
-          adaptableType="org.eclipse.core.resources.IResource"
-          class="plugin.hardcoded.ample.mapping.AmpleResourceAdapterFactory">
-       <adapter
-             type="plugin.hardcoded.ample.core.items.IAmpleElement">
-       </adapter>
-    </factory>
+       point="org.eclipse.ui.menus">
+    <menuContribution
+          locationURI="popup:org.eclipse.ui.popup.any?after=export">
+       <separator
+             name="ample_separator"
+             visible="true">
+       </separator>
+       <menu
+             label="Build Configuration"
+             tooltip="Build Configuration">
+          <command
+                commandId="plugin.hardcoded.ample.command.addSourceFolder"
+                disabledIcon="icons/ample_sourcefolder_add_disabled.png"
+                icon="icons/ample_sourcefolder_add.png"
+                label="Add source folder"
+                style="push"
+                tooltip="Add a source folder">
+          </command>
+          <command
+                commandId="plugin.hardcoded.ample.command.removeSourceFolder"
+                disabledIcon="icons/ample_sourcefolder_remove_disabled.png"
+                icon="icons/ample_sourcefolder_remove.png"
+                label="Remove source folder"
+                style="push"
+                tooltip="Remove a source folder">
+          </command>
+       </menu>
+    </menuContribution>
  </extension>
  <extension
-       point="org.eclipse.ui.navigator.navigatorContent">
-    <navigatorContent
-          activeByDefault="true"
-          contentProvider="plugin.hardcoded.ample.decorator.AmpleModelContentProvider"
-          icon="icons/ample_model_icon.png"
-          id="plugin.hardcoded.ample.ampleModelContent"
-          labelProvider="plugin.hardcoded.ample.decorator.AmpleModelLabelProvider"
-          name="Ample Workspace"
-          priority="normal">
-       <triggerPoints>
-          <or>
-             <instanceof value="org.eclipse.core.resources.IFolder" />
-             <instanceof value="org.eclipse.core.resources.IFile" />
-             <instanceof value="plugin.hardcoded.ample.core.items.IAmpleElement" />
-             <instanceof value="plugin.hardcoded.ample.mapping.AmpleModelProvider" />
-          </or>
-       </triggerPoints>
-       <override
-             policy="InvokeAlwaysRegardlessOfSuppressedExt"
-             suppressedExtensionId="org.eclipse.team.ui.resourceContent">
-       </override>
-       <possibleChildren>
-          <or>
-             <instanceof
-                   value="plugin.hardcoded.ample.core.items.IAmpleElement">
-             </instanceof>
-             <instanceof
-                   value="org.eclipse.core.resources.IFolder">
-             </instanceof>
-             <instanceof
-                   value="org.eclipse.core.resources.IFile">
-             </instanceof>
-          </or>
-       </possibleChildren>
-    </navigatorContent>
- </extension>
- <extension
-       point="org.eclipse.team.ui.teamContentProviders">
-    <teamContentProvider
-          contentExtensionId="plugin.hardcoded.ample.ampleModelContent"
-          icon="icons/ample_model_icon.png"
-          modelProviderId="plugin.hardcoded.ample.modelProvider">
-    </teamContentProvider>
+       point="org.eclipse.ui.handlers">
+    <handler
+          class="plugin.hardcoded.ample.handlers.AmpleHandlers$AddSourceFolder"
+          commandId="plugin.hardcoded.ample.command.addSourceFolder">
+    </handler>
+    <handler
+          class="plugin.hardcoded.ample.handlers.AmpleHandlers$RemoveSourceFolder"
+          commandId="plugin.hardcoded.ample.command.removeSourceFolder">
+    </handler>
  </extension>
 
  

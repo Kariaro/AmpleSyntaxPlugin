@@ -1,34 +1,48 @@
 package plugin.hardcoded.ample.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 
 import plugin.hardcoded.ample.core.items.IAmpleProject;
 
-//https://www.ibm.com/developerworks/opensource/tutorials/os-eclipse-plugin-guide/index.html
-public class AmpleProject implements IAmpleProject, IProjectNature, IAdaptable {
+
+/**
+ * 
+ * Project:
+ *  | [INFO] Libraries
+ *  | [SRCF] src
+ *  |        ... full paths
+ *  | [BINF] bin
+ *  |        ... full paths
+ *  |
+ *  | [ITEM] file.xyz
+ *  
+ * @author HardCoded
+ */
+public class AmpleProject implements IAmpleProject, IProjectNature {
 	public static final String NATURE_ID = "plugin.hardcoded.ample.core.amplenature";
 	
 	/**
 	 * Project configuration file
 	 */
-	private AmpleDocument document;
+	private AmpleConfiguration config;
+	private AmpleLibrary library;
 	private IProject project;
 	
+	// BAD
 	public AmpleProject() {
-		
+		library = new AmpleLibrary(this);
 	}
-	
-	
 	
 	public void configure() throws CoreException {
 		System.out.println("Configure project: " + project);
-		// TODO: Update the nature image of a project so it becomes visible directly after configuring it.
 		
 		try {
-			// Initialize the document
-			document = getDocument();
+			// Initialize the configuration
+			config = getConfiguration();
 		} catch(Exception e) {
 			
 		}
@@ -37,39 +51,18 @@ public class AmpleProject implements IAmpleProject, IProjectNature, IAdaptable {
 	public void deconfigure() throws CoreException {
 		System.out.println("Deconfigure: " + project);
 		// TODO: Remove the project configuration file.
-		
-		// https://www.eclipse.org/forums/index.php/t/92595/
-		// FIXME: https://github.com/eclipse/xtext-xtend/issues/856
-		
-		// ModelNavigatorContentProvider
-		// IPipelinedTreeContentProvider pipeline = null;
-		// org.eclipse.ui.internal.decorators.DecoratorManager b = null;
 	}
 	
-	public AmpleDocument getDocument() {
-		if(document == null) {
-			IFile config = getConfigurationFile();
-			if(!config.exists()) {
-				document = new AmpleDocument();
-				
-				// Make sure that we save it
-				document.save(config);
-			} else {
-				document = new AmpleDocument(config);
-			}
+	public AmpleConfiguration getConfiguration() {
+		if(config == null) {
+			config = new AmpleConfiguration(this, PROJECT_CONFIGURATION_FILE);
 		}
 		
-		return document;
+		return config;
 	}
 	
 	protected void saveDocument() {
-		AmpleDocument doc = getDocument();
-		doc.save(getConfigurationFile());
-	}
-	
-	
-	protected IFile getConfigurationFile() {
-		return project.getFile(PROJECT_CONFIGURATION_FILE);
+		getConfiguration().save();
 	}
 	
 	public void setProject(IProject project) {
@@ -80,23 +73,33 @@ public class AmpleProject implements IAmpleProject, IProjectNature, IAdaptable {
 		return project;
 	}
 	
-	public int getType() {
-		return AMPLE_PROJECT;
-	}
-	
 	public IResource getResource() {
 		return project;
 	}
-
-
-
-	@Override
-	public <T> T getAdapter(Class<T> adapter) {
-		if(adapter == IProject.class) {
-			return adapter.cast(project);
+	
+	public AmpleLibrary getLibrary() {
+		return library;
+	}
+	
+	public List<IFolder> getSourceFolders() {
+		List<String> list = getConfiguration().getSourceFolders();
+		List<IFolder> result = new ArrayList<>();
+		
+		for(String s : list) {
+			result.add(project.getFolder(s));
 		}
 		
-		System.out.println("GetAdapter: " + adapter);
-		return null;
+		return result;
+	}
+	
+	public boolean hasSourceFolder(IFolder folder) {
+		List<String> list = getConfiguration().getSourceFolders();
+		String path = folder.getProjectRelativePath().toString();
+		System.out.println(path + " //// " + list);
+		return list.contains(path);
+	}
+	
+	public AmpleProject getAmpleProject() {
+		return this;
 	}
 }

@@ -13,42 +13,57 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.runtime.Assert;
 import org.w3c.dom.*;
 
-public class AmpleDocument {
-	protected Document document;
+import plugin.hardcoded.ample.AmpleLogger;
+
+public class AmpleConfiguration {
+	protected final AmpleProject project;
+	protected final Document document;
 	protected Element root;
 	protected Element sources;
+	protected Element libraries;
+	private final IFile file;
 	
-	protected AmpleDocument() {
-		this(null, false);
-	}
+//	protected AmpleDocument(AmpleProject project) {
+//		this(project, null, false);
+//	}
+//	
+//	protected AmpleDocument(AmpleProject project, IFile file) {
+//		this(project, file, file != null && file.exists());
+//	}
 	
-	protected AmpleDocument(IFile file) {
-		this(file, file != null && file.exists());
-	}
-	
-	private AmpleDocument(IFile file, boolean hasFile) {
+	protected AmpleConfiguration(AmpleProject project, String path) {
+		Assert.isNotNull(project);
+		Assert.isNotNull(path);
+		this.project = project;
+		
 		DocumentBuilder builder;
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			builder = factory.newDocumentBuilder();
 		} catch(ParserConfigurationException e) {
-			e.printStackTrace();
-			return;
+			AmpleLogger.log(e);
+			throw new IllegalStateException();
 		}
 		
-		try {
-			if(hasFile) {
+		file = project.getProject().getFile(path);
+		
+		if(file.exists()) {
+			Document tmp = null;
+			try {
 				InputStream stream = file.getContents();
-				document = builder.parse(stream);
-				cleanDocumentFromBlank(null, document.getDocumentElement());
+				tmp = builder.parse(stream);
+				cleanDocumentFromBlank(null, tmp.getDocumentElement());
 				stream.close();
-			} else {
-				document = builder.newDocument();
+			} catch(Exception e) {
+				AmpleLogger.log(e);
+				tmp = builder.newDocument();
 			}
-		} catch(Exception e) {
-			e.printStackTrace();
+			
+			document = tmp;
+		} else {
 			document = builder.newDocument();
 		}
 		
@@ -84,10 +99,16 @@ public class AmpleDocument {
 			document.appendChild(root);
 		}
 		
-		sources = getElement(root, "source_folders");
+		sources = getElement(root, "sources");
 		if(sources == null) {
-			sources = newElement("source_folders");
+			sources = newElement("sources");
 			root.appendChild(sources);
+		}
+		
+		libraries = getElement(root, "libraries");
+		if(libraries == null) {
+			libraries = newElement("libraries");
+			root.appendChild(libraries);
 		}
 	}
 
@@ -128,12 +149,13 @@ public class AmpleDocument {
 		return list;
 	}
 	
+	// TODO: Don't mix match IFolder and String!
 	public void updateSourceFolders(List<IFolder> list) {
 		clearElement(sources);
 		
 		for(IFolder folder : list) {
 			Element elm = newElement("entry");
-			elm.setAttribute("path", folder.getName());
+			elm.setAttribute("path", folder.getProjectRelativePath().toString());
 			sources.appendChild(elm);
 		}
 	}
@@ -150,10 +172,11 @@ public class AmpleDocument {
 		return (Element)list.item(0);
 	}
 	
-	public void save(IFile file) {
+	public void save() {
 		try(FileOutputStream stream = new FileOutputStream(file.getLocation().toOSString())) {
 			stream.write(toXMLString().getBytes());
 		} catch(TransformerException e) {
+			
 		} catch(IOException e) {
 			
 		}

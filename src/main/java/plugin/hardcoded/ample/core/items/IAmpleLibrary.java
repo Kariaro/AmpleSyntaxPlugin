@@ -4,16 +4,15 @@ import org.eclipse.swt.graphics.Image;
 
 import plugin.hardcoded.ample.AmplePreferences;
 
-public interface IAmpleProject extends IAmpleElement {
-	public static final String PROJECT_CONFIGURATION_FILE = ".aproj";
+public interface IAmpleLibrary extends IAmpleElement {
 	
 	@Override
 	default int getType() {
-		return AMPLE_PROJECT;
+		return AMPLE_LIBRARY;
 	}
 	
 	@Override
 	default Image getIcon() {
-		return AmplePreferences.getImage(AmplePreferences.AMPLE_PROJECT_ICON);
+		return AmplePreferences.getImage(AmplePreferences.AMPLE_LIBRARY_ICON);
 	}
 }
