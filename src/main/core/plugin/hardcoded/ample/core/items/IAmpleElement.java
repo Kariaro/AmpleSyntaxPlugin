@@ -8,16 +8,22 @@ import org.eclipse.swt.graphics.Image;
 import plugin.hardcoded.ample.core.AmpleProject;
 
 public interface IAmpleElement extends IAdaptable {
-	public static final int AMPLE_LIBRARY = 1;
-	public static final int AMPLE_PROJECT = 2;
+	public static final int AMPLE_LIBRARY	= 1;
+	public static final int AMPLE_PROJECT	= 2;
+	public static final int AMPLE_SOURCEFOLDER	= 3;
+	public static final int SOURCE_FOLDER 	= 4;
+	
+	/**
+	 * Returns the resource of this element.
+	 * @return the resource of this element
+	 */
+	IResource getResource();
 	
 	/**
 	 * Returns the icon of this element.
 	 * @return the icon of this element
 	 */
-	default Image getIcon() {
-		return null;
-	}
+	Image getIcon();
 	
 	/**
 	 * Returns the type of this element.
@@ -25,9 +31,11 @@ public interface IAmpleElement extends IAdaptable {
 	 */
 	int getType();
 	
+	/**
+	 * Returns the ample project of this element.
+	 * @return the ample project of this element
+	 */
 	AmpleProject getAmpleProject();
-	
-	IResource getResource();
 	
 	default IProject getProject() {
 		IResource res = getResource();
@@ -41,8 +49,7 @@ public interface IAmpleElement extends IAdaptable {
 		return res.getName();
 	}
 	
-	@Override
-	default <T> T getAdapter(Class<T> adapter) {
+	default <T> T getAdapter(Class<T> type) {
 		return null;
 	}
 }

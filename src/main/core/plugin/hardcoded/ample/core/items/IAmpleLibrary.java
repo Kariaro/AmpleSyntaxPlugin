@@ -6,6 +6,10 @@ import plugin.hardcoded.ample.AmplePreferences;
 
 public interface IAmpleLibrary extends IAmpleElement {
 	
+	default String getVersionString() {
+		return "1.0";
+	}
+	
 	@Override
 	default int getType() {
 		return AMPLE_LIBRARY;

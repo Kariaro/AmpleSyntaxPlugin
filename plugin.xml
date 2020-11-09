@@ -16,7 +16,7 @@
 	<extension
 	       point="org.eclipse.ui.ide.projectNatureImages">
 	    <image
-	          icon="icons/ample_projectdecal.png"
+	          icon="icons/ovr16/projectdecal.png"
 	          id="plugin.hardcoded.ample.core.amplenature.icon"
 	          natureId="plugin.hardcoded.ample.core.amplenature">
 	    </image>
@@ -25,7 +25,7 @@
 		<editor
 				name="Ample Syntax Editor"
 				extensions="ample"
-				icon="icons/ample_sourcefile.png"
+				icon="icons/obj16/sourcefile.png"
 				id="ample_editor"
 				class="plugin.hardcoded.ample.views.AmpleSyntaxEditor">
 		</editor>
@@ -45,7 +45,7 @@
 		<wizard
 				category="plugin.hardcoded.ample.wizard"
 				class="plugin.hardcoded.ample.wizard.AmplePluginWizard"
-				icon="icons/ample_sourcefile.png"
+				icon="icons/obj16/sourcefile.png"
 				id="ample_wizard"
 				name="Ample Project">
 		</wizard>
@@ -170,16 +170,45 @@
           id="plugin.hardcoded.ample.decorator.icons"
           label="Ample Icon Decorator"
           lightweight="true"
-          location="REPLACE"
           state="true">
     </decorator>
+ </extension>
+ <extension
+       point="org.eclipse.core.runtime.adapters">
+    <factory
+          adaptableType="plugin.hardcoded.ample.core.items.IAmpleElement"
+          class="plugin.hardcoded.ample.adapters.AmpleElementAdapterFactory">
+       <adapter
+             type="org.eclipse.core.resources.IResource">
+       </adapter>
+       <adapter
+             type="org.eclipse.ui.IContributorResourceAdapter">
+       </adapter>
+       <adapter
+             type="org.eclipse.ui.ide.IContributorResourceAdapter2">
+       </adapter>
+    </factory>
+    <factory
+          adaptableType="plugin.hardcoded.ample.core.items.IAmpleProject"
+          class="plugin.hardcoded.ample.adapters.AmpleProjectAdapterFactory">
+       <adapter
+             type="org.eclipse.core.resources.IProject">
+       </adapter>
+    </factory>
+    <factory
+          adaptableType="org.eclipse.core.resources.IResource"
+          class="plugin.hardcoded.ample.adapters.ResourceAdapterFactory">
+       <adapter
+             type="plugin.hardcoded.ample.core.items.IAmpleElement">
+       </adapter>
+    </factory>
  </extension>
  <extension
        point="org.eclipse.ui.navigator.navigatorContent">
     <navigatorContent
           activeByDefault="true"
           contentProvider="plugin.hardcoded.ample.decorator.AmpleNavigatorContentProvider"
-          icon="icons/ample_elements.png"
+          icon="icons/eview16/ample_elements.png"
           id="plugin.hardcoded.ample.ampleContent"
           labelProvider="plugin.hardcoded.ample.decorator.AmpleNavigatorLabelProvider"
           name="Ample Elements"
@@ -193,7 +222,13 @@
                      value="plugin.hardcoded.ample.core.amplenature">
                </test>
             </adapt>
-          </or>
+            <instanceof
+                  value="plugin.hardcoded.ample.core.items.IAmpleElement">
+            </instanceof>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
+            </instanceof>
+         </or>
        </triggerPoints>
        <override
              policy="InvokeAlwaysRegardlessOfSuppressedExt"
@@ -236,16 +271,16 @@
              tooltip="Build Configuration">
           <command
                 commandId="plugin.hardcoded.ample.command.addSourceFolder"
-                disabledIcon="icons/ample_sourcefolder_add_disabled.png"
-                icon="icons/ample_sourcefolder_add.png"
+                disabledIcon="icons/dlcl16/add_sourcefolder.png"
+                icon="icons/elcl16/add_sourcefolder.png"
                 label="Add source folder"
                 style="push"
                 tooltip="Add a source folder">
           </command>
           <command
                 commandId="plugin.hardcoded.ample.command.removeSourceFolder"
-                disabledIcon="icons/ample_sourcefolder_remove_disabled.png"
-                icon="icons/ample_sourcefolder_remove.png"
+                disabledIcon="icons/dlcl16/remove_sourcefolder.png"
+                icon="icons/elcl16/remove_sourcefolder.png"
                 label="Remove source folder"
                 style="push"
                 tooltip="Remove a source folder">

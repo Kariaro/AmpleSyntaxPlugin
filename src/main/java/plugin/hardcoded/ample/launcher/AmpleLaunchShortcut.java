@@ -1,6 +1,7 @@
 package plugin.hardcoded.ample.launcher;
 
-import java.io.*;
+import java.io.File;
+import java.io.PrintStream;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.debug.ui.ILaunchShortcut;
@@ -13,7 +14,6 @@ import hardcoded.compiler.AmpleCompilerBuild;
 import hardcoded.compiler.instruction.IRProgram;
 import hardcoded.vm.AmpleVm;
 import plugin.hardcoded.ample.AmpleSyntaxPlugin;
-import plugin.hardcoded.ample.AmpleUtils;
 import plugin.hardcoded.ample.console.AmpleConsole;
 
 public class AmpleLaunchShortcut implements ILaunchShortcut {
@@ -38,7 +38,7 @@ public class AmpleLaunchShortcut implements ILaunchShortcut {
 		
 		try {
 			AmpleCompilerBuild build = new AmpleCompilerBuild();
-			File file = AmpleUtils.fromIFile((IFile)source);
+			File file = ((IFile)source).getLocation().toFile();
 			
 			System.out.println("Launching from file: " + file);
 			System.out.println("=========================================================================================");

@@ -17,16 +17,18 @@ public class AmplePreferences {
 	// TODO: Color cache.
 	
 	private static Map<ImageDescriptor, Image> cached_images = new HashMap<>();
-	public static final ImageDescriptor PROJECT_DECAL			= getResourceImage("icons/ample_projectdecal.png");
-	public static final ImageDescriptor EMPTY_FILE_ICON			= getResourceImage("icons/ample_file_empty.png");
+	public static final ImageDescriptor PROJECT_DECAL			= getResourceImage("icons/ovr16/projectdecal.png");
 	public static final ImageDescriptor OUTLINE_BLOB			= getResourceImage("icons/ample_outline_blob_2.png");
 	
-	public static final ImageDescriptor PROJECT_ICON			= getResourceImage("icons/ample_projecticon.png");
-	public static final ImageDescriptor LIBRARY_ICON			= getResourceImage("icons/ample_libraryicon.png");
-	public static final ImageDescriptor SOURCE_FILE				= getResourceImage("icons/ample_sourcefile.png");
-	public static final ImageDescriptor SOURCE_FILE_DISABLED	= getResourceImage("icons/ample_sourcefile_disabled.png");
-	public static final ImageDescriptor SOURCE_FOLDER			= getResourceImage("icons/ample_sourcefolder.png");
+	// TODO: Put this image in the correct path
 	public static final ImageDescriptor SOURCE_PACKAGE			= getResourceImage("icons/ample_sourcepackage.png");
+	
+	public static final ImageDescriptor PROJECT_ICON			= getResourceImage("icons/obj16/project.png");
+	public static final ImageDescriptor LIBRARY_ICON			= getResourceImage("icons/obj16/library.png");
+	public static final ImageDescriptor SOURCE_FILE				= getResourceImage("icons/obj16/sourcefile.png");
+	public static final ImageDescriptor SOURCE_FILE_DISABLED	= getResourceImage("icons/obj16/sourcefile_disabled.png");
+	public static final ImageDescriptor FOLDER					= getResourceImage("icons/obj16/folder.png");
+	public static final ImageDescriptor SOURCE_FOLDER			= getResourceImage("icons/obj16/sourcefolder.png");
 	
 	static void dispose() {
 		// We don't need to dispose any of these probably :s

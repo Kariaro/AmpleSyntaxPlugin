@@ -42,10 +42,4 @@ public class AmpleUtils {
 		if(path == null) return null;
 		return path.toFile();
 	}
-	
-	public static File fromIFile(IFile file) {
-		if(file == null) return null;
-		// TODO: Will this always work?
-		return file.getLocation().toFile();
-	}
 }

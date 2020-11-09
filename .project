@@ -33,12 +33,12 @@
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>1604865661506</id>
+			<id>1604923408743</id>
 			<name></name>
 			<type>22</type>
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>
-				<arguments>1.0-name-matches-false-false-*.xcf</arguments>
+				<arguments>1.0-name-matches-false-false-*.xcfa</arguments>
 			</matcher>
 		</filter>
 	</filteredResources>

@@ -39,6 +39,9 @@ public class AmpleIconDecorator implements ILabelDecorator, ILightweightLabelDec
 			} else if(res instanceof IFile) {
 				IFile file = (IFile)res;
 				
+				// Only applies to ample files
+				if(!file.getFileExtension().equals("ample")) return;
+				
 				boolean foundSource = false;
 				
 				IPath path = file.getProjectRelativePath();
@@ -65,9 +68,12 @@ public class AmpleIconDecorator implements ILabelDecorator, ILightweightLabelDec
 					decoration.addOverlay(AmplePreferences.SOURCE_FILE_DISABLED, IDecoration.REPLACE);
 				}
 			}
-		} else if(element instanceof AmpleLibrary) {
+		}
+		else if(element instanceof AmpleLibrary) {}
+		/*else if(element instanceof AmpleLibrary) {
 			decoration.addSuffix(" [Version 1.0]");
-		} else {
+		}*/
+		else {
 			System.out.printf("Decorate: %s %s\n", element, (element != null ? (element.getClass()):"<NULL OBJECT>"));
 		}
 	}
