@@ -25,6 +25,7 @@ public class AmpleHandlers {
 			List<IFolder> list = project.getSourceFolders();
 			if(list.add(folder)) {
 				project.getConfiguration().updateSourceFolders(list);
+				project.getConfiguration().save();
 				AmpleIconDecorator.refreshIcons();
 			}
 			
@@ -47,6 +48,7 @@ public class AmpleHandlers {
 			List<IFolder> list = project.getSourceFolders();
 			if(list.remove(folder)) {
 				project.getConfiguration().updateSourceFolders(list);
+				project.getConfiguration().save();
 				AmpleIconDecorator.refreshIcons();
 			}
 			

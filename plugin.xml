@@ -45,7 +45,7 @@
 		<wizard
 				category="plugin.hardcoded.ample.wizard"
 				class="plugin.hardcoded.ample.wizard.AmplePluginWizard"
-				icon="icons/obj16/sourcefile.png"
+				icon="icons/elcl16/add_project.png"
 				id="ample_wizard"
 				name="Ample Project">
 		</wizard>
@@ -235,6 +235,13 @@
              suppressedExtensionId="org.eclipse.ui.navigator.resourceContent">
        </override>
     </navigatorContent>
+    <commonFilter
+          activeByDefault="true"
+          class="plugin.hardcoded.ample.filters.HideBinaryFoldersFilter"
+          description="Hide ample output folders"
+          id="plugin.hardcoded.ample.filters.hideOutputFolder"
+          name="Ample output folders">
+    </commonFilter>
  </extension>
  <extension
        point="org.eclipse.ui.navigator.viewer">
@@ -243,6 +250,9 @@
        <includes>
           <contentExtension
                 pattern="plugin.hardcoded.ample.ampleContent">
+          </contentExtension>
+          <contentExtension
+                pattern="plugin.hardcoded.ample.filters.*">
           </contentExtension>
        </includes>
     </viewerContentBinding>

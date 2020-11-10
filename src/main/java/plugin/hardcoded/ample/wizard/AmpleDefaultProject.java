@@ -8,6 +8,7 @@ import java.util.List;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
+import plugin.hardcoded.ample.core.AmpleCore;
 import plugin.hardcoded.ample.core.AmpleProject;
 
 public class AmpleDefaultProject {
@@ -35,6 +36,13 @@ public class AmpleDefaultProject {
 		
 		// Configure amplenature
 		configureNature(project);
+		
+		{
+			AmpleProject ap = AmpleCore.getAmpleProject(project);
+			ap.getConfiguration().updateSourceFolders(List.of(src_folder));
+			ap.getConfiguration().setOutputFolder(bin_folder);
+			ap.getConfiguration().save();
+		}
 		
 		return true;
 	}

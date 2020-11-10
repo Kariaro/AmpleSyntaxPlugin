@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -23,8 +24,11 @@ import plugin.hardcoded.ample.AmplePreferences;
 import plugin.hardcoded.ample.decorator.AmpleIconDecorator;
 
 public class AmplePropertyPage extends PropertyPage implements IWorkbenchPropertyPage {
+	private AmpleConfiguration config;
 	private AmpleProject project;
+	
 	private java.util.List<IFolder> sourceFolders = new ArrayList<>();
+	private Text outputFolderText;
 	
 	private TableViewer sourceFolderTable;
 	private Button up_button;
@@ -37,6 +41,7 @@ public class AmplePropertyPage extends PropertyPage implements IWorkbenchPropert
 			if(project == null)
 				throw new NullPointerException("AmpleProject was null");
 			
+			config = project.getConfiguration();
 		} catch(Exception e) {
 			Label error = new Label(parent, SWT.NONE);
 			StringWriter sw = new StringWriter();
@@ -73,16 +78,16 @@ public class AmplePropertyPage extends PropertyPage implements IWorkbenchPropert
 		TabItem tab_item = new TabItem(folder, SWT.NONE);
 		tab_item.setText("Source folders");
 		tab_item.setImage(AmplePreferences.getImage(AmplePreferences.SOURCE_FOLDER));
-		
+
 		Composite panel = new Composite(folder, SWT.NONE);
 		panel.setLayoutData(new GridData(GridData.FILL_BOTH));
 		panel.setLayout(new GridLayout());
 		tab_item.setControl(panel);
 		
-		Label label = new Label(panel, SWT.NONE);
-		label.setText("Select all source paths:");
-		
 		{
+			Label label = new Label(panel, SWT.NONE);
+			label.setText("Select all source paths:");
+			
 			Composite source_panel = new Composite(panel, SWT.NONE);
 			GridLayout layout = new GridLayout();
 			source_panel.setLayout(layout);
@@ -255,10 +260,50 @@ public class AmplePropertyPage extends PropertyPage implements IWorkbenchPropert
 						updateArrowButtonSourcePage();
 					}
 				});
-				
-				// Update the buttons
-				updateArrowButtonSourcePage();
 			}
+			
+			{
+				Label label_2 = new Label(source_panel, SWT.NONE);
+				label_2.setText("Output Folder:");
+				label_2.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
+				
+				outputFolderText = new Text(source_panel, SWT.BORDER);
+				outputFolderText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				IFolder outputFolder = config.getOutputFolder();
+				if(outputFolder == null) {
+					outputFolderText.setText("");
+				} else {
+					outputFolderText.setText(outputFolder.getProjectRelativePath().toString());
+				}
+				
+				Button set_bin_folder = new Button(source_panel, SWT.NONE);
+				set_bin_folder.setText("Browser");
+				set_bin_folder.setLayoutData(new GridData(92, 25));
+				set_bin_folder.addListener(SWT.MouseDown, new Listener() {
+					public void handleEvent(Event event) {
+						ElementTreeSelectionDialog dlg = new ElementTreeSelectionDialog(
+							folder.getShell(),
+							new WorkbenchLabelProvider(),
+							new AmpleProjectFolderContentProvider(sourceFolders)
+						);
+						dlg.setInput((IProject)getElement());
+						dlg.setMessage("Set the output folder");
+						dlg.setTitle("Set the output folder");
+						
+						if(dlg.open() == Window.OK) {
+							Object object = dlg.getFirstResult();
+							
+							if(object instanceof IFolder) {
+								IFolder folder = (IFolder)object;
+								outputFolderText.setText(folder.getProjectRelativePath().toString());
+							}
+						}
+					}
+				});
+			}
+			
+			// Update the buttons
+			updateArrowButtonSourcePage();
 		}
 	}
 	
@@ -291,9 +336,11 @@ public class AmplePropertyPage extends PropertyPage implements IWorkbenchPropert
 		try {
 			AmpleConfiguration doc = project.getConfiguration();
 			doc.updateSourceFolders(sourceFolders);
+			doc.setOutputFolder(project.getProject().getFolder(outputFolderText.getText()));
 			project.saveDocument();
 			
 			AmpleIconDecorator.refreshIcons();
+			project.getProject().touch(new NullProgressMonitor());
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

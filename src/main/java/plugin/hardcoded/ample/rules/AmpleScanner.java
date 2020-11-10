@@ -115,6 +115,9 @@ public class AmpleScanner implements ITokenScanner {
 	public void setRange(IDocument document, int offset, int length) {
 		String text = null;
 		
+		offset = 0;
+		length = document.getLength();
+		
 		try {
 			text = document.get(offset, length);
 		} catch(BadLocationException e) {
@@ -122,14 +125,8 @@ public class AmpleScanner implements ITokenScanner {
 		}
 		
 		this.offset = offset;
-		this.count = length;
+		this.count = text.length();
 		this.str = text;
-		this.index = 0;
-		
-		// TODO: Bad for performance.. Just check the closest 
-		this.str = document.get();
-		this.count = str.length();
-		this.offset = 0;
 		this.index = 0;
 	}
 }

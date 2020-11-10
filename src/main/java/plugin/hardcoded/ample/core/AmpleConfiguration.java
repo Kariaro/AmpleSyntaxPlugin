@@ -25,6 +25,7 @@ public class AmpleConfiguration {
 	protected Element root;
 	protected Element sources;
 	protected Element libraries;
+	protected Element output;
 	private final IFile file;
 	
 	protected AmpleConfiguration(AmpleProject project, String path) {
@@ -103,6 +104,12 @@ public class AmpleConfiguration {
 			libraries = newElement("libraries");
 			root.appendChild(libraries);
 		}
+		
+		output = getElement(root, "output");
+		if(output == null) {
+			output = newElement("output");
+			root.appendChild(output);
+		}
 	}
 
 	public String toXMLString() throws TransformerException {
@@ -180,6 +187,20 @@ public class AmpleConfiguration {
 			file.delete(true, null);
 		} catch(CoreException e) {
 			AmpleLogger.log(e);
+		}
+	}
+
+	public void setOutputFolder(IFolder folder) {
+		output.setAttribute("path", folder.getProjectRelativePath().toString());
+	}
+	
+	public IFolder getOutputFolder() {
+		String path = output.getAttribute("path");
+		if(path == null) return null;
+		try {
+			return project.getProject().getFolder(path);
+		} catch(Exception e) {
+			return null;
 		}
 	}
 }

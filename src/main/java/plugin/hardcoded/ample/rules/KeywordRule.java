@@ -13,7 +13,7 @@ public class KeywordRule implements NRule {
 	private static final String[] KEYWORDS = {
 		"while", "for", "if", "else", "switch", "case", "default",
 		"continue", "break", "return", "export", "unsigned", "signed",
-		"class"
+		"class", "inline"
 	};
 	
 	public IToken process(AmpleScanner scanner) {

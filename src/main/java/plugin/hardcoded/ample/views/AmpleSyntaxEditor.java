@@ -22,11 +22,14 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
+import hardcoded.compiler.BuildConfiguration;
 import hardcoded.compiler.errors.SyntaxMarker;
 import hardcoded.compiler.impl.IProgram;
 import hardcoded.compiler.parsetree.ParseTreeGenerator;
 import plugin.hardcoded.ample.AmplePreferences;
 import plugin.hardcoded.ample.AmpleUtils;
+import plugin.hardcoded.ample.core.AmpleCore;
+import plugin.hardcoded.ample.core.AmpleProject;
 import plugin.hardcoded.ample.outline.AmpleOutlinePage;
 import plugin.hardcoded.ample.syntax.AmpleCharacterPairMatcher;
 
@@ -169,8 +172,17 @@ public class AmpleSyntaxEditor extends TextEditor implements IDocumentListener {
 			System.out.printf("Refreshing: [%s] [%s]\n", projectPath, filePath);
 			
 			try {
+				AmpleProject ap = AmpleCore.getAmpleProject(project);
+				
+				BuildConfiguration config = new BuildConfiguration();
+				config.setWorkingDirectory(project.getLocation().toFile());
+				config.setStartFile(resource.getProjectRelativePath().toOSString());
+				for(IFolder folder : ap.getSourceFolders()) {
+					config.addSourceFolder(folder.getProjectRelativePath().toOSString());
+				}
+				
 				ParseTreeGenerator generator = new ParseTreeGenerator();
-				parseTree = generator.init(projectPath, filePath);
+				parseTree = generator.init(config, config.getStartFile());
 				
 				for(SyntaxMarker syntaxMarker : parseTree.getSyntaxMarkers()) {
 					IMarker marker = resource.createMarker(IMarker.PROBLEM);

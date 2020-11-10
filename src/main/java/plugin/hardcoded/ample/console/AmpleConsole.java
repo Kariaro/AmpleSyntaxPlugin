@@ -13,12 +13,7 @@ public class AmpleConsole {
 		stream = console.newMessageStream();
 	}
 	
-	public void clearConsole() {
-		
-	}
-	
 	public void activate() {
-		// TODO: Implement this method.
 		IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
 		manager.addConsoles(new IConsole[] { console });
 		manager.showConsoleView(console);
@@ -27,6 +22,10 @@ public class AmpleConsole {
 	
 	public void write(int b) throws IOException {
 		stream.write(b);
+	}
+	
+	public void clearConsole() {
+		console.clearConsole();
 	}
 	
 	public boolean isValid() {
