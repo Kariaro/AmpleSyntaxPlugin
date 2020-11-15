@@ -3,9 +3,7 @@ package plugin.hardcoded.ample.preferences;
 import java.util.*;
 
 import org.eclipse.jface.layout.LayoutConstants;
-import org.eclipse.jface.preference.ColorSelector;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.preference.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -23,8 +21,10 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
+import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
 import plugin.hardcoded.ample.AmpleSyntaxPlugin;
+import plugin.hardcoded.ample.util.IPreferenceObject;
 
 public abstract class ColorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	public static class HighlightColor {
@@ -101,6 +101,7 @@ public abstract class ColorPreferencePage extends PreferencePage implements IWor
 	
 	private final TreeObject ROOT = new TreeObject("ROOT", null);
 	private final Map<TreeObject, java.util.List<TreeObject>> tree = new LinkedHashMap<>();
+	private final PreferenceStore tempStore;
 	
 	protected class TreeObject {
 		public final Boolean forced_value;
@@ -108,7 +109,6 @@ public abstract class ColorPreferencePage extends PreferencePage implements IWor
 		public final String id;
 		
 		private HighlightColor item;
-		//private HighlightColor default_item;
 		
 		public TreeObject(String name, String id) {
 			this(name, id, id == null ? false:null);
@@ -119,14 +119,6 @@ public abstract class ColorPreferencePage extends PreferencePage implements IWor
 			this.forced_value = forced_value;
 			this.id = id;
 		}
-		
-//		public void setDefault(RGB color, boolean bold, boolean italic, boolean strikethough, boolean underline) {
-//			default_item = new HighlightColor(color, bold, italic, strikethough, underline);
-//		}
-//		
-//		public void setDefault(String serial) {
-//			default_item = new HighlightColor(serial);
-//		}
 		
 		public String toString() {
 			return name;
@@ -181,8 +173,13 @@ public abstract class ColorPreferencePage extends PreferencePage implements IWor
 		if(sourceViewer == null) {
 			this.sourceViewer = new TextSourceViewerConfiguration();
 		} else {
+			if(!(sourceViewer instanceof IPreferenceObject)) {
+				throw new IllegalArgumentException();
+			}
 			this.sourceViewer = sourceViewer;
 		}
+		
+		tempStore = new PreferenceStore();
 	}
 	
 	protected Control createContents(Composite parent) {
@@ -204,18 +201,16 @@ public abstract class ColorPreferencePage extends PreferencePage implements IWor
 		
 		for(TreeObject object : tree.keySet()) {
 			if(object.id != null) {
-				//System.out.println(store.getDefaultString(object.id));
-				//store.setDefault(object.id, object.default_item == null ? "0,0,0,0":object.default_item.toString());
 				object.item = new HighlightColor(store.getString(object.id));
+				if(object.forced_value != null) object.item.enabled = object.forced_value;
 			}
 		}
 		
 		for(java.util.List<TreeObject> list : tree.values()) {
 			for(TreeObject object : list) {
 				if(object.id != null) {
-					//System.out.println(store.getDefaultString(object.id));
-					//store.setDefault(object.id, object.default_item == null ? "0,0,0,0":object.default_item.toString());
 					object.item = new HighlightColor(store.getString(object.id));
+					if(object.forced_value != null) object.item.enabled = object.forced_value;
 				}
 			}
 		}
@@ -228,6 +223,7 @@ public abstract class ColorPreferencePage extends PreferencePage implements IWor
 		for(TreeObject object : tree.keySet()) {
 			if(object.id != null) {
 				store.setValue(object.id, object.item == null ? "0,0,0,0":object.item.toString());
+				tempStore.setToDefault(object.id);
 			}
 		}
 		
@@ -235,6 +231,7 @@ public abstract class ColorPreferencePage extends PreferencePage implements IWor
 			for(TreeObject object : list) {
 				if(object.id != null) {
 					store.setValue(object.id, object.item == null ? "0,0,0,0":object.item.toString());
+					tempStore.setToDefault(object.id);
 				}
 			}
 		}
@@ -248,6 +245,8 @@ public abstract class ColorPreferencePage extends PreferencePage implements IWor
 			if(object.id != null) {
 				store.setToDefault(object.id);
 				object.item = new HighlightColor(store.getDefaultString(object.id));
+				if(object.forced_value != null) object.item.enabled = object.forced_value;
+				tempStore.setToDefault(object.id);
 				
 				if(object == selection) {
 					updateButtonsWithSelection();
@@ -260,6 +259,8 @@ public abstract class ColorPreferencePage extends PreferencePage implements IWor
 				if(object.id != null) {
 					store.setToDefault(object.id);
 					object.item = new HighlightColor(store.getDefaultString(object.id));
+					if(object.forced_value != null) object.item.enabled = object.forced_value;
+					tempStore.setToDefault(object.id);
 					
 					if(object == selection) {
 						updateButtonsWithSelection();
@@ -268,8 +269,10 @@ public abstract class ColorPreferencePage extends PreferencePage implements IWor
 			}
 		}
 		
-		if(viewer != null)
+		if(viewer != null) {
+			setViewerPreferences();
 			viewer.refresh();
+		}
 	}
 	
 	private void updateButtonsWithSelection() {
@@ -291,7 +294,6 @@ public abstract class ColorPreferencePage extends PreferencePage implements IWor
 			return;
 		}
 		
-		System.out.println("Selection: " + selection.name + "/" + selection.item);
 		boolean isEnabled;
 		if(selection.forced_value != null) {
 			enable_button.setEnabled(false);
@@ -483,6 +485,10 @@ public abstract class ColorPreferencePage extends PreferencePage implements IWor
 		return selection != null && selection.item != null;
 	}
 	
+	public final SourceViewerConfiguration setSourceViewerConfiguration(SourceViewerConfiguration configuration) {
+		return sourceViewer;
+	}
+	
 	public final SourceViewerConfiguration getSourceViewerConfiguration() {
 		return sourceViewer;
 	}
@@ -502,7 +508,7 @@ public abstract class ColorPreferencePage extends PreferencePage implements IWor
 		viewer.getTextWidget().setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 		viewer.getTextWidget().setFont(JFaceResources.getTextFont());
 		viewer.setEditable(false);
-		viewer.configure(sourceViewer);
+		setViewerPreferences();
 		
 		document = new Document();
 		initDocument(document);
@@ -516,7 +522,37 @@ public abstract class ColorPreferencePage extends PreferencePage implements IWor
 	
 	public abstract void initDocument(IDocument document);
 	
+	private void setViewerPreferences() {
+		Display.getDefault().asyncExec(() -> {
+			IPreferenceObject pref = (IPreferenceObject)sourceViewer;
+			
+			ChainedPreferenceStore store = new ChainedPreferenceStore(new IPreferenceStore[] {
+				tempStore,
+				AmpleSyntaxPlugin.getPrefereceStore()
+			});
+			
+			pref.setPreferenceStore(store);
+			
+			viewer.unconfigure();
+			viewer.configure(sourceViewer);
+			viewer.refresh();
+		});
+	}
+	
+	private void updateObject(TreeObject object) {
+		if(object == null) return;
+		
+		if(object.item.enabled == false) {
+			tempStore.setToDefault(object.id);
+		} else {
+			tempStore.setValue(object.id, object.item.toString());
+		}
+	}
+	
 	private void update(TreeObject object) {
-		System.out.println("Updating: " + object.item);
+		// System.out.println("Updating: " + object.item);
+		
+		updateObject(object);
+		setViewerPreferences();
 	}
 }

@@ -2,10 +2,13 @@ package plugin.hardcoded.ample.lir;
 
 import java.util.regex.Pattern;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.rules.*;
 
 import hardcoded.compiler.constants.Atom;
 import hardcoded.compiler.instruction.IRType;
+import plugin.hardcoded.ample.AmplePreferences;
+import plugin.hardcoded.ample.util.TokenUtils;
 
 public class LIRScanner extends RuleBasedScanner {
 	private static final String LABEL_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789"
@@ -22,7 +25,7 @@ public class LIRScanner extends RuleBasedScanner {
 	// private static final String LABEL_PATTERN = "[a-zA-Z0-9_\\[\\]]+";
 	
 	
-	private static class LabelRule implements IRule {
+	private class LabelRule implements IRule {
 		private ICharacterScanner in;
 		private int count = 0;
 		
@@ -44,7 +47,12 @@ public class LIRScanner extends RuleBasedScanner {
 				}
 				
 				if(c == ':') {
-					return LIRColors.LABEL;
+					if(count == 1) {
+						in.unread();
+						return Token.UNDEFINED;
+					}
+					
+					return label_token;
 				}
 			}
 			
@@ -67,7 +75,7 @@ public class LIRScanner extends RuleBasedScanner {
 		}
 	}
 	
-	private static class BracketRule implements IRule {
+	private class BracketRule implements IRule {
 		private ICharacterScanner in;
 		private int count = 0;
 		
@@ -102,9 +110,9 @@ public class LIRScanner extends RuleBasedScanner {
 				
 				if(level == 0) {
 					in.unread();
-					if(Pattern.matches(NUMBER_PATTERN, buffer)) return LIRColors.NUMBER;
-					if(Pattern.matches(REGISTER_PATTERN, buffer)) return LIRColors.REGISTER;
-					return LIRColors.BRACKET;
+					if(Pattern.matches(NUMBER_PATTERN, buffer)) return number_token;
+					if(Pattern.matches(REGISTER_PATTERN, buffer)) return register_token;
+					return bracketcontent_token;
 				}
 			}
 			
@@ -127,22 +135,39 @@ public class LIRScanner extends RuleBasedScanner {
 		}
 	}
 	
-	public LIRScanner() {
+	private IToken instruction_token;
+	private IToken types_token;
+	private IToken number_token;
+	private IToken register_token;
+	private IToken others_token;
+	private IToken bracketcontent_token;
+	private IToken label_token;
+	
+	public LIRScanner(IPreferenceStore store) {
+		instruction_token = TokenUtils.getToken(store, AmplePreferences.LIR_COLOR_INSTRUCTIONS);
+		types_token = TokenUtils.getToken(store, AmplePreferences.LIR_COLOR_TYPES);
+		number_token = TokenUtils.getToken(store, AmplePreferences.LIR_COLOR_NUMBERS);
+		register_token = TokenUtils.getToken(store, AmplePreferences.LIR_COLOR_REGISTERS);
+		others_token = TokenUtils.getToken(store, AmplePreferences.LIR_COLOR_OTHERS);
+		bracketcontent_token = TokenUtils.getToken(store, AmplePreferences.LIR_COLOR_BRACKETCONTENT);
+		label_token = TokenUtils.getToken(store, AmplePreferences.LIR_COLOR_LABELS);
+		
 		WordRule insts = new WordRule(WORD_DETECTOR);
-		
 		for(IRType inst : IRType.values()) {
-			insts.addWord(inst.name(), LIRColors.INSTRUCTION);
+			insts.addWord(inst.name(), instruction_token);
 		}
 		
-		WordRule atoms = new WordRule(WORD_DETECTOR);
-		for(Atom atom : Atom.values()) {
-			atoms.addWord(atom.name(), LIRColors.ATOM);
+		WordRule types = new WordRule(WORD_DETECTOR);
+		for(Atom type : Atom.values()) {
+			types.addWord(type.name(), types_token);
 		}
+		
+		setDefaultReturnToken(others_token);
 		
 		setRules(new IRule[] {
 			new BracketRule(),
 			insts,
-			atoms,
+			types,
 			new LabelRule(),
 		});
 	}
