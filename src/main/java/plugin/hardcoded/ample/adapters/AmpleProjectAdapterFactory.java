@@ -5,6 +5,7 @@ import org.eclipse.core.runtime.IAdapterFactory;
 
 import plugin.hardcoded.ample.core.items.IAmpleProject;
 
+@Deprecated(forRemoval = true)
 public class AmpleProjectAdapterFactory implements IAdapterFactory {
 	public Class<?>[] getAdapterList() {
 		return new Class<?>[] { IProject.class };

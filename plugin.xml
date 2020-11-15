@@ -5,12 +5,15 @@
 	<extension
 			point="org.eclipse.core.resources.natures"
 			id="plugin.hardcoded.ample.core.amplenature"
-			name="Ample nature">
+			name="Ample">
 		<runtime>
      <run
            class="plugin.hardcoded.ample.core.AmpleProject">
      </run>
   </runtime>
+  <builder
+        id="plugin.hardcoded.ample.core.amplebuilder">
+  </builder>
 	</extension>
 	
 	<extension
@@ -21,6 +24,60 @@
 	          natureId="plugin.hardcoded.ample.core.amplenature">
 	    </image>
 	</extension>
+ <extension
+       id="plugin.hardcoded.ample.core.amplebuilder"
+       name="Ample Builder"
+       point="org.eclipse.core.resources.builders">
+    <builder
+          hasNature="true">
+       <run
+             class="plugin.hardcoded.ample.builders.AmpleBuilder">
+       </run></builder>
+ </extension>
+ <extension
+       point="org.eclipse.core.runtime.preferences">
+    <initializer
+          class="plugin.hardcoded.ample.initializers.LirPreferenceInitializer">
+    </initializer>
+ </extension>
+ <extension
+       point="org.eclipse.ui.preferencePages">
+    <page
+          class="plugin.hardcoded.ample.preferences.AmplePreferencePage"
+          id="plugin.hardcoded.ample.core.ampleprefs"
+          name="Ample">
+    </page>
+    <page
+          category="plugin.hardcoded.ample.core.ampleprefs"
+          class="plugin.hardcoded.ample.preferences.LirPreferencePage"
+          id="plugin.hardcoded.ample.core.lirprefs"
+          name="LIR">
+    </page>
+    <page
+          category="plugin.hardcoded.ample.core.ampleprefs"
+          class="plugin.hardcoded.ample.preferences.EmptyPreferencePage"
+          id="plugin.hardcoded.ample.core.ampleprefs.editor"
+          name="Editor">
+    </page>
+    <page
+          category="plugin.hardcoded.ample.core.ampleprefs.editor"
+          class="plugin.hardcoded.ample.preferences.AmpleColorPreferencePage"
+          id="plugin.hardcoded.ample.core.ampleprefs.coloring"
+          name="Syntax Coloring">
+    </page>
+    <page
+          category="plugin.hardcoded.ample.core.lirprefs"
+          class="plugin.hardcoded.ample.preferences.EmptyPreferencePage"
+          id="plugin.hardcoded.ample.core.lirprefs.editor"
+          name="Editor">
+    </page>
+    <page
+          category="plugin.hardcoded.ample.core.lirprefs.editor"
+          class="plugin.hardcoded.ample.preferences.LirColorPreferencePage"
+          id="plugin.hardcoded.ample.core.lirprefs.coloring"
+          name="Syntax Coloring">
+    </page>
+ </extension>
 	<extension point="org.eclipse.ui.editors">
 		<editor
 				name="Ample Syntax Editor"
@@ -29,6 +86,14 @@
 				id="ample_editor"
 				class="plugin.hardcoded.ample.views.AmpleSyntaxEditor">
 		</editor>
+  <editor
+        class="plugin.hardcoded.ample.lir.LIREditorViewer"
+        default="true"
+        extensions="lir, llir"
+        icon="icons/obj16/lirfile.png"
+        id="ample_llir_editor"
+        name="Low Level IR">
+  </editor>
 	</extension>
 	
 	<extension point="org.eclipse.help.contexts">
@@ -43,19 +108,72 @@
           name="Ample">
     </category>
 		<wizard
-				category="plugin.hardcoded.ample.wizard"
-				class="plugin.hardcoded.ample.wizard.AmplePluginWizard"
-				icon="icons/elcl16/add_project.png"
-				id="ample_wizard"
-				name="Ample Project">
+        category="plugin.hardcoded.ample.wizard"
+        class="plugin.hardcoded.ample.wizard.AmplePluginWizard"
+        icon="icons/elcl16/add_project.png"
+        id="ample_wizard"
+        name="Ample Project"
+        project="true">
 		</wizard>
+  <wizard
+        category="plugin.hardcoded.ample.wizard"
+        class="plugin.hardcoded.ample.wizardstest.AmpleNewFileWizard"
+        icon="icons/elcl16/add_amplefile.png"
+        id="ample_new_file_wizard"
+        name="Ample File">
+  </wizard>
 	</extension>
+ <extension
+       point="org.eclipse.ui.perspectiveExtensions">
+    <perspectiveExtension
+          targetID="org.eclipse.ui.resourcePerspective">
+       <newWizardShortcut
+             id="ample_new_file_wizard">
+       </newWizardShortcut>
+    </perspectiveExtension>
+ </extension>
  <extension
        point="org.eclipse.core.contenttype.contentTypes">
     <file-association
           content-type="org.eclipse.core.runtime.xml"
           file-names=".aproj">
     </file-association>
+    <content-type
+          file-extensions="hlir"
+          id="plugin.hardcoded.ample.core.content.hlir"
+          name="High Level IR"
+          priority="normal">
+    </content-type>
+    <file-association
+          content-type="plugin.hardcoded.ample.core.content.hlir"
+          file-extensions="hlir">
+    </file-association>
+    <content-type
+          describer="plugin.hardcoded.ample.describer.LIRDescriber"
+          file-extensions="llir, lir"
+          id="plugin.hardcoded.ample.core.content.llir"
+          name="Low Level IR"
+          priority="high">
+    </content-type>
+    <file-association
+          content-type="plugin.hardcoded.ample.core.content.llir"
+          file-extensions="llir, lir">
+    </file-association>
+ </extension>
+ <extension
+       point="org.eclipse.team.core.fileTypes">
+    <fileTypes
+          extension="hlir"
+          type="binary">
+    </fileTypes>
+    <fileTypes
+          extension="llir"
+          type="binary">
+    </fileTypes>
+    <fileTypes
+          extension="lir"
+          type="binary">
+    </fileTypes>
  </extension>
 	
 	<extension point="org.eclipse.ui.commands">
@@ -85,9 +203,15 @@
 						<iterate ifEmpty="true" operator="and">
 							<adapt type="org.eclipse.core.resources.IResource">
 								<not>
-									<test
-											property="org.eclipse.core.resources.projectNature"
-											value="plugin.hardcoded.ample.core.amplenature" />
+									<or>
+										<test
+												property="org.eclipse.core.resources.projectNature"
+												value="plugin.hardcoded.ample.core.amplenature" />
+										
+										<test
+												property="org.eclipse.core.resources.projectNature"
+												value="org.eclipse.jdt.core.javanature" />
+									</or>
 								</not>
 							</adapt>
 						</iterate>
@@ -173,6 +297,7 @@
           state="true">
     </decorator>
  </extension>
+ <!--
  <extension
        point="org.eclipse.core.runtime.adapters">
     <factory
@@ -203,6 +328,8 @@
        </adapter>
     </factory>
  </extension>
+ -->
+ 
  <extension
        point="org.eclipse.ui.navigator.navigatorContent">
     <navigatorContent
@@ -269,6 +396,17 @@
     </command>
  </extension>
  <extension
+       point="org.eclipse.ui.handlers">
+    <handler
+          class="plugin.hardcoded.ample.handlers.AmpleHandlers$AddSourceFolder"
+          commandId="plugin.hardcoded.ample.command.addSourceFolder">
+    </handler>
+    <handler
+          class="plugin.hardcoded.ample.handlers.AmpleHandlers$RemoveSourceFolder"
+          commandId="plugin.hardcoded.ample.command.removeSourceFolder">
+    </handler>
+ </extension>
+ <extension
        point="org.eclipse.ui.menus">
     <menuContribution
           locationURI="popup:org.eclipse.ui.popup.any?after=export">
@@ -297,17 +435,6 @@
           </command>
        </menu>
     </menuContribution>
- </extension>
- <extension
-       point="org.eclipse.ui.handlers">
-    <handler
-          class="plugin.hardcoded.ample.handlers.AmpleHandlers$AddSourceFolder"
-          commandId="plugin.hardcoded.ample.command.addSourceFolder">
-    </handler>
-    <handler
-          class="plugin.hardcoded.ample.handlers.AmpleHandlers$RemoveSourceFolder"
-          commandId="plugin.hardcoded.ample.command.removeSourceFolder">
-    </handler>
  </extension>
 
  

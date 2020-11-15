@@ -1,7 +1,6 @@
 package plugin.hardcoded.ample.decorator;
 
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -31,7 +30,7 @@ public class AmpleNavigatorLabelProvider implements ILabelProvider, IDescription
 				return AmplePreferences.getImage(AmplePreferences.SOURCE_FOLDER);
 			}
 			
-			return AmplePreferences.getImage(AmplePreferences.FOLDER);
+			return AmplePreferences.getImage(AmplePreferences.FOLDER_ICON);
 		}
 		
 		return null;
@@ -51,9 +50,9 @@ public class AmpleNavigatorLabelProvider implements ILabelProvider, IDescription
 		return null;
 	}
 	
-	// FIXME: Is this function needed? 
+	// FIXME: This function does not get called... Is this function needed?
 	public String getText(Object element) {
-		System.out.printf("Stylizing text: [%s], [%s]\n", element, (element != null ? element.getClass():"<NULL OBJECT>"));
+		// System.out.printf("Stylizing text: [%s], [%s]\n", element, (element != null ? element.getClass():"<NULL OBJECT>"));
 		
 		if(element instanceof IAmpleLibrary) {
 			return "Library";
@@ -63,21 +62,16 @@ public class AmpleNavigatorLabelProvider implements ILabelProvider, IDescription
 	}
 	
 	public StyledString getStyledText(Object element) {
-		System.out.printf("Stylizing stxt: [%s], [%s]\n", element, (element != null ? element.getClass():"<NULL OBJECT>"));
+		// System.out.printf("Stylizing stxt: [%s], [%s]\n", element, (element != null ? element.getClass():"<NULL OBJECT>"));
 		
 		if(element instanceof IAmpleLibrary) {
 			return createString("Library", " [Version " + ((IAmpleLibrary)element).getVersionString() + "]");
 		}
-		
-		if(element instanceof IAmpleProject) {
-			IAmpleProject project = (IAmpleProject)element;
-			return createString(project.getName(), " - AmpleProject");
-		}
-		
-		if(element instanceof IResource) {
-			IResource res = (IResource)element;
-			return createString(res.getName(), " - ABC");
-		}
+//		
+//		if(element instanceof IResource) {
+//			IResource res = (IResource)element;
+//			return createString(res.getName(), null);
+//		}
 		
 		return null;
 	}

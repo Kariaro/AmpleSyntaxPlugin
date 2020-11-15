@@ -1,24 +1,20 @@
 package plugin.hardcoded.ample.views;
 
-import java.io.File;
 import java.util.List;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.DocumentEvent;
-import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
@@ -26,8 +22,8 @@ import hardcoded.compiler.BuildConfiguration;
 import hardcoded.compiler.errors.SyntaxMarker;
 import hardcoded.compiler.impl.IProgram;
 import hardcoded.compiler.parsetree.ParseTreeGenerator;
+import plugin.hardcoded.ample.AmpleLogger;
 import plugin.hardcoded.ample.AmplePreferences;
-import plugin.hardcoded.ample.AmpleUtils;
 import plugin.hardcoded.ample.core.AmpleCore;
 import plugin.hardcoded.ample.core.AmpleProject;
 import plugin.hardcoded.ample.outline.AmpleOutlinePage;
@@ -41,6 +37,7 @@ public class AmpleSyntaxEditor extends TextEditor implements IDocumentListener {
 	public static final int PROP_PARSETREE = 0x1001;
 	
 	// NOTE: This editor is bound to a single file.
+	// TODO: Implement code folding
 	
 //	private ProjectionAnnotationModel annotationModel;
 //	@SuppressWarnings("unused")
@@ -52,26 +49,7 @@ public class AmpleSyntaxEditor extends TextEditor implements IDocumentListener {
 	
 	public AmpleSyntaxEditor() {
 		super();
-		addPropertyListener(new IPropertyListener() {
-			public boolean initialized;
-			
-			public void propertyChanged(Object source, int propId) {
-				if(propId == PROP_PARSETREE) return;
-				
-				if(!initialized) {
-					if(getEditorInput() != null) {
-						updateParseTree();
-						initialized = true;
-					}
-				} else {
-					if(!isDirty() && propId == IEditorPart.PROP_DIRTY) {
-						updateParseTree();
-					}
-				}
-			}
-		});
-		
-		syntax = new AmpleSyntaxColor(this);
+		syntax = new AmpleSyntaxColor();
 		outlinePage = new AmpleOutlinePage(this);
 		
 		setSourceViewerConfiguration(syntax);
@@ -79,11 +57,11 @@ public class AmpleSyntaxEditor extends TextEditor implements IDocumentListener {
 	}
 	
 	public void documentAboutToBeChanged(DocumentEvent event) {
-		System.out.println("AmpleSyntaxEditor: documentAboutToBeChanged(DocumentEvent event) : [" + event + "]");
+		// System.out.println("AmpleSyntaxEditor: documentAboutToBeChanged(DocumentEvent event) : [" + event + "]");
 	}
 	
 	public void documentChanged(DocumentEvent event) {
-		System.out.println("AmpleSyntaxEditor: documentChanged(DocumentEvent event) : [" + event + "]");
+		// System.out.println("AmpleSyntaxEditor: documentChanged(DocumentEvent event) : [" + event + "]");
 	}
 	
 	public void createPartControl(Composite parent) {
@@ -95,10 +73,6 @@ public class AmpleSyntaxEditor extends TextEditor implements IDocumentListener {
 //		
 //		viewer.doOperation(ProjectionViewer.TOGGLE);
 //		annotationModel = viewer.getProjectionAnnotationModel();
-	}
-	
-	protected void doSetInput(IEditorInput input) throws CoreException {
-		super.doSetInput(input);
 	}
 	
 	public void updateFoldingStructure(List<Position> positions) {
@@ -124,15 +98,29 @@ public class AmpleSyntaxEditor extends TextEditor implements IDocumentListener {
 		return viewer;
 	}
 	
+	protected void doSetInput(IEditorInput input) throws CoreException {
+		super.doSetInput(input);
+		
+		IDocumentProvider provider = getDocumentProvider();
+		IDocument document = provider.getDocument(input);
+		document.addDocumentListener(this);
+		
+		// Update the parseTree
+		updateParseTree();
+	}
 	
+	protected void editorSaved() {
+		super.editorSaved();
+		
+		// Update the parseTree
+		updateParseTree();
+	}
 	
 	
 	public <T> T getAdapter(Class<T> adapter) {
 		if(IContentOutlinePage.class.equals(adapter)) {
 			return adapter.cast(outlinePage);
 		}
-		
-		//System.out.println("GetAdapter: " + adapter);
 		
 		return super.getAdapter(adapter);
 	}
@@ -166,10 +154,7 @@ public class AmpleSyntaxEditor extends TextEditor implements IDocumentListener {
 			IProject project = resource.getProject();
 			if(!project.exists()) return;
 			
-			File projectPath = AmpleUtils.fileFromIProject(project);
-			String filePath = resource.getProjectRelativePath().toOSString();
-			
-			System.out.printf("Refreshing: [%s] [%s]\n", projectPath, filePath);
+			System.out.printf("Refreshing: [%s]\n", resource);
 			
 			try {
 				AmpleProject ap = AmpleCore.getAmpleProject(project);
@@ -206,7 +191,7 @@ public class AmpleSyntaxEditor extends TextEditor implements IDocumentListener {
 				}
 			} catch(Throwable t) {
 				System.out.println("Had errors!");
-				t.printStackTrace();
+				AmpleLogger.log(t);
 			}
 			
 			if(parseTree != null) {

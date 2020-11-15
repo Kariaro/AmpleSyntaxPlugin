@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 import plugin.hardcoded.ample.core.items.IAmpleProject;
 
@@ -23,6 +24,7 @@ import plugin.hardcoded.ample.core.items.IAmpleProject;
  * @author HardCoded
  */
 public class AmpleProject implements IAmpleProject, IProjectNature {
+	public static final String BUILDER_ID = "plugin.hardcoded.ample.core.amplebuilder";
 	public static final String NATURE_ID = "plugin.hardcoded.ample.core.amplenature";
 	
 	/**
@@ -100,9 +102,39 @@ public class AmpleProject implements IAmpleProject, IProjectNature {
 	}
 	
 	public boolean hasSourceFolder(IFolder folder) {
+		if(!hasResource(folder)) return false;
+		
 		List<String> list = getConfiguration().getSourceFolders();
 		String path = folder.getProjectRelativePath().toString();
 		return list.contains(path);
+	}
+	
+	public boolean checkFileSourceFolder(IFile file) {
+		if(!hasResource(file)) return false;
+		
+		IPath path = file.getProjectRelativePath();
+		int segments = path.segmentCount();
+		for(int i = 0; i < segments; i++) {
+			IFolder folder = null;
+			
+			try {
+				// TODO: We dont want this to throw exceptions
+				IPath test = path.uptoSegment(segments - i - 1);
+				folder = project.getProject().getFolder(test);
+			} catch(Exception e) {
+				break;
+			}
+			
+			if(hasSourceFolder(folder)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private boolean hasResource(IResource res) {
+		return res != null && project.equals(res.getProject());
 	}
 	
 	public AmpleProject getAmpleProject() {

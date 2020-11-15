@@ -7,6 +7,7 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import plugin.hardcoded.ample.core.AmpleCore;
 import plugin.hardcoded.ample.core.items.IAmpleElement;
 
+@Deprecated(forRemoval = true)
 public class ResourceAdapterFactory implements IAdapterFactory {
 	public Class<?>[] getAdapterList() {
 		return new Class<?>[] { IAmpleElement.class };

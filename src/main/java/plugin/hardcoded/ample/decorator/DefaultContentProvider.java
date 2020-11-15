@@ -1,4 +1,4 @@
-package plugin.hardcoded.ample.decorator;
+ package plugin.hardcoded.ample.decorator;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 

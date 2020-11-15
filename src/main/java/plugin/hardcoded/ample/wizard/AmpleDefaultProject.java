@@ -58,6 +58,24 @@ public class AmpleDefaultProject {
 		
 		if(status.isOK()) {
 			description.setNatureIds(natures);
+			ICommand[] commands = description.getBuildSpec();
+			boolean hasBuilder = false;
+			
+			for(ICommand command : commands) {
+				if(command.getBuilderName().equals(AmpleProject.BUILDER_ID)) {
+					hasBuilder = true;
+					break;
+				}
+			}
+			
+			if(!hasBuilder) {
+				List<ICommand> buildSpecs = new ArrayList<>(Arrays.asList(commands));
+				ICommand command = description.newCommand();
+				command.setBuilderName(AmpleProject.BUILDER_ID);
+				buildSpecs.add(0, command);
+				description.setBuildSpec(buildSpecs.toArray(ICommand[]::new));
+			}
+			
 			project.setDescription(description, null);
 		}
 		

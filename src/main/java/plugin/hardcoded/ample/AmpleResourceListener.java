@@ -7,6 +7,7 @@ import java.util.Objects;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 
+@Deprecated
 public class AmpleResourceListener implements IResourceChangeListener {
 	private List<Listener> listeners = new ArrayList<>();
 	

@@ -9,6 +9,7 @@ import org.eclipse.ui.ide.IContributorResourceAdapter2;
 
 import plugin.hardcoded.ample.core.items.IAmpleProject;
 
+@Deprecated(forRemoval = true)
 public class AmpleElementAdapterFactory implements IAdapterFactory, IContributorResourceAdapter2 {
 	public Class<?>[] getAdapterList() {
 		return new Class<?>[] {

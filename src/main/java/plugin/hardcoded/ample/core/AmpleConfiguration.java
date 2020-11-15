@@ -85,7 +85,6 @@ public class AmpleConfiguration {
 		}
 	}
 	
-	// Make sure that we have some important elements inside the xml file
 	private void init() {
 		root = getElement(document, "project");
 		if(root == null) {
@@ -93,25 +92,21 @@ public class AmpleConfiguration {
 			document.appendChild(root);
 		}
 		
-		sources = getElement(root, "sources");
-		if(sources == null) {
-			sources = newElement("sources");
-			root.appendChild(sources);
-		}
-		
-		libraries = getElement(root, "libraries");
-		if(libraries == null) {
-			libraries = newElement("libraries");
-			root.appendChild(libraries);
-		}
-		
-		output = getElement(root, "output");
-		if(output == null) {
-			output = newElement("output");
-			root.appendChild(output);
-		}
+		sources   = getElementOrCreate(root, "sources");
+		libraries = getElementOrCreate(root, "libraries");
+		output    = getElementOrCreate(root, "output");
 	}
-
+	
+	public Element getElementOrCreate(Element parent, String name) {
+		Element result = getElement(parent, name);
+		if(result == null) {
+			result = newElement(name);
+			parent.appendChild(result);
+		}
+		
+		return result;
+	}
+	
 	public String toXMLString() throws TransformerException {
 		TransformerFactory tf = TransformerFactory.newInstance();
 		Transformer tr = tf.newTransformer();

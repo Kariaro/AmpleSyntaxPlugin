@@ -1,21 +1,28 @@
 package plugin.hardcoded.ample;
 
-import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
+
 public class ColorSet {
-	private final Map<String, Color> colors;
+	private ColorSet() {}
 	
-	public ColorSet() {
-		colors = new HashMap<>();
+	private static final Map<RGB, Color> colors = new HashMap<>();
+	
+	public static Color get(int red, int green, int blue) {
+		return get(new RGB(red, green, blue));
 	}
 	
-	public Color get(String name) {
-		return colors.get(name);
-	}
-	
-	public void add(String name, Color color) {
-		colors.put(name, color);
+	public static Color get(RGB rgb) {
+		Color color = colors.get(rgb);
+		
+		if(color == null) {
+			color = new Color(rgb);
+			colors.put(rgb, color);
+		}
+		
+		return color;
 	}
 }

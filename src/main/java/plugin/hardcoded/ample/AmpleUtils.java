@@ -1,9 +1,6 @@
 package plugin.hardcoded.ample;
 
-import java.io.File;
-
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.*;
 
 public class AmpleUtils {
@@ -24,22 +21,5 @@ public class AmpleUtils {
 		if(input == null) return null;
 		
 		return input.getAdapter(IResource.class);
-	}
-	
-	private static File workspaceDir;
-	public static File getWorkspaceDir() {
-		if(workspaceDir == null) {
-			workspaceDir = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
-		}
-		
-		return workspaceDir;
-	}
-	
-	public static File fileFromIProject(IProject project) {
-		if(project == null) return null;
-		IPath path = project.getLocation();
-		
-		if(path == null) return null;
-		return path.toFile();
 	}
 }

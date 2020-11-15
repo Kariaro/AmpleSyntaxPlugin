@@ -5,10 +5,11 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
 
+import plugin.hardcoded.ample.AmpleLogger;
+
 public class AmpleCharacterPairMatcher implements ICharacterPairMatcher {
 	private String group = "{}[]()";
-	
-	public AmpleCharacterPairMatcher() {}
+	private int anchor;
 	
 	public void clear() {
 		
@@ -19,22 +20,22 @@ public class AmpleCharacterPairMatcher implements ICharacterPairMatcher {
 	}
 	
 	public int getAnchor() {
-		return 0;
+		return anchor;
 	}
 	
-	// TODO: Do not match brackets inside strings!
-	// TODO: How do we know that we are inside a string?
 	public IRegion match(IDocument document, int offset) {
 		int length = document.getLength();
 		if(offset > length) return null;
 		
+		String body = document.get();
+		
 		try {
 			for(int i = 0; i < 2; i++) {
-				int pos = offset - 1 + i;
+				int pos = offset + i - 1;
 				if(pos >= length) return null;
 				if(pos < 0) continue;
 				
-				char c = document.getChar(pos);
+				char c = body.charAt(pos);
 				int index = group.indexOf(c);
 				if(index < 0) continue;
 				
@@ -42,55 +43,59 @@ public class AmpleCharacterPairMatcher implements ICharacterPairMatcher {
 					char open = c;
 					char close = group.charAt(index + 1);
 					
-					return match_forwards(document, pos, open, close);
+					anchor = RIGHT;
+					String string = body.substring(pos + 1);
+					return match_forwards(string, pos, open, close);
 				} else {
 					char open = group.charAt(index - 1);
 					char close = c;
 					
-					return match_backwards(document, pos, open, close);
+					anchor = LEFT;
+					String string = body.substring(0, pos);
+					return match_backwards(string, open, close);
 				}
 			}
 		} catch(BadLocationException e) {
-			e.printStackTrace();
+			AmpleLogger.log(e);
 		}
 		
 		return null;
 	}
 	
-	private IRegion match_forwards(IDocument document, final int index, char open, char close) throws BadLocationException {
-		int length = document.getLength();
+	private IRegion match_forwards(String string, final int index, char open, char close) throws BadLocationException {
 		int level = 1;
 		
 		// Match forward
-		for(int i = index + 1; i < length; i++) {
-			char c = document.getChar(i);
+		for(int i = 0; i < string.length(); i++) {
+			char c = string.charAt(i);
 			
 			if(c == open) level++;
 			if(c == close) level--;
+			
 			if(level == 0) {
-				final int idx = i;
+				final int offset = index + i + 1;
 				return new IRegion() {
-					private final int offset = idx;
 					public int getOffset() { return offset; }
 					public int getLength() { return 1; }
 				};
 			}
 		}
+		
 		return null;
 	}
 	
-	private IRegion match_backwards(IDocument document, final int index, char open, char close) throws BadLocationException {
+	private IRegion match_backwards(String string, char open, char close) throws BadLocationException {
 		int level = -1;
 		
-		for(int i = index - 1; i >= 0; i--) {
-			char c = document.getChar(i);
+		for(int i = string.length() - 1; i >= 0; i--) {
+			char c = string.charAt(i);
 			
 			if(c == open) level++;
 			if(c == close) level--;
+			
 			if(level == 0) {
-				final int idx = i;
+				final int offset = i;
 				return new IRegion() {
-					private final int offset = idx;
 					public int getOffset() { return offset; }
 					public int getLength() { return 1; }
 				};

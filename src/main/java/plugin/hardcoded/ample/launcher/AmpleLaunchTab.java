@@ -18,10 +18,14 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
+import plugin.hardcoded.ample.AmpleLogger;
+import plugin.hardcoded.ample.core.AmpleCore;
+import plugin.hardcoded.ample.core.AmpleProject;
+
 public class AmpleLaunchTab extends AbstractLaunchConfigurationTab {
 	private boolean isInitialized;
 	
-	private IProject selectedProject;
+	private AmpleProject project;
 	
 	private Text project_field;
 	private Text entry_field;
@@ -45,12 +49,6 @@ public class AmpleLaunchTab extends AbstractLaunchConfigurationTab {
 			project_field = new Text(panel, SWT.BORDER);
 			project_field.setEditable(false); // TODO: Allow the user to write project names
 			project_field.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-//			project_field.addKeyListener(new KeyAdapter() {
-//				public void keyReleased(KeyEvent e) {
-//					setDirty(true);
-//					updateButtons();
-//				}
-//			});
 			
 			Button project_button = new Button(panel, SWT.NONE);
 			project_button.setText("Browse");
@@ -66,13 +64,12 @@ public class AmpleLaunchTab extends AbstractLaunchConfigurationTab {
 					dlg.setMessage("Select a Ample project");
 					dlg.setAllowMultiple(false);
 					dlg.setInput(ResourcesPlugin.getWorkspace().getRoot());
-					if(selectedProject != null) {
-						dlg.setInitialSelection(selectedProject);
+					if(project != null) {
+						dlg.setInitialSelection(project.getProject());
 					}
 					
 					if(dlg.open() == Window.OK) {
-						selectedProject = (IProject)dlg.getFirstResult();
-						setDirty(true);
+						project = AmpleCore.getAmpleProject(dlg.getFirstResult());
 						updateButtons();
 					}
 				}
@@ -102,7 +99,7 @@ public class AmpleLaunchTab extends AbstractLaunchConfigurationTab {
 			entry_button.setLayoutData(new GridData(100, 23));
 			entry_button.addListener(SWT.MouseDown, new Listener() {
 				public void handleEvent(Event event) {
-					if(!hasValidProject()) return;
+					if(project == null) return;
 					
 					ElementListSelectionDialog dlg = new ElementListSelectionDialog(
 						parent.getShell(),
@@ -114,7 +111,7 @@ public class AmpleLaunchTab extends AbstractLaunchConfigurationTab {
 					try {
 						dlg.setElements(getAllProjectFiles());
 					} catch(CoreException e) {
-						e.printStackTrace();
+						AmpleLogger.log(e);
 					}
 					
 					if(dlg.open() == Window.OK) {
@@ -139,31 +136,28 @@ public class AmpleLaunchTab extends AbstractLaunchConfigurationTab {
 	
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		if(!isInitialized) return false;
-		return selectedProject != null && !entry_button.getText().isBlank();
+		return project != null && !entry_button.getText().isBlank();
 	}
 	
 	protected void updateButtons() {
 		if(!isInitialized) return;
 		project_field.setText(getProjectString());
-		entry_button.setEnabled(hasValidProject());
-		
+		entry_button.setEnabled(project != null);
 		updateLaunchConfigurationDialog();
 	}
 	
-	protected boolean hasValidProject() {
-		return !(selectedProject == null || !selectedProject.exists());
-	}
-	
 	protected String getProjectString() {
-		if(selectedProject == null) return "";
-		return selectedProject.getName();
+		if(project == null) return "";
+		return project.getName();
 	}
 	
 	protected void setProject(String name) {
 		if(name == null || name.isEmpty()) return;
 		
 		try {
-			selectedProject = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+			project = AmpleCore.getAmpleProject(
+				ResourcesPlugin.getWorkspace().getRoot().getProject(name)
+			);
 		} catch(Exception e) {
 			// There are no [IWorkspaceRoot.validateProjectName] methods
 			// so we just skip the exceptions made by [getProject]
@@ -171,10 +165,11 @@ public class AmpleLaunchTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	protected Object[] getAllProjectFiles() throws CoreException {
-		if(selectedProject == null || !selectedProject.isOpen()) return new Object[0];
+		IProject resource = project.getProject();
+		if(!resource.isOpen()) return new Object[0];
 		
 		java.util.List<IResource[]> parent = new ArrayList<>();
-		parent.add(selectedProject.members());
+		parent.add(project.getSourceFolders().toArray(IResource[]::new));
 		java.util.List<Object> list = new ArrayList<>();
 		
 		// TODO: There is a possibility that this loop gets stuck.

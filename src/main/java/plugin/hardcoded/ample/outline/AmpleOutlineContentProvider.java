@@ -1,6 +1,6 @@
 package plugin.hardcoded.ample.outline;
 
-import java.util.Set;
+import java.util.List;
 
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
@@ -37,10 +37,10 @@ public class AmpleOutlineContentProvider implements ITreeContentProvider, ILabel
 	}
 	
 	private Object[] fixFunction(IFunction obj) {
-		Set<IStatement> set = obj.getStatements();
+		List<IStatement> list = obj.getStatements();
 		
-		if(set.size() == 1) {
-			IStatement stat = (IStatement)set.toArray()[0];
+		if(list.size() == 1) {
+			IStatement stat = list.get(0);
 			
 			if(stat.hasStatements())
 				return stat.getStatements().toArray();
@@ -48,7 +48,7 @@ public class AmpleOutlineContentProvider implements ITreeContentProvider, ILabel
 			return EMPTY_ARRAY;
 		}
 		
-		return set.toArray();
+		return list.toArray();
 	}
 	
 	public Object[] getElements(Object inputElement) {

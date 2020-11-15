@@ -1,16 +1,12 @@
 package plugin.hardcoded.ample.console;
 
-import java.io.IOException;
-
 import org.eclipse.ui.console.*;
 
 public class AmpleConsole {
 	public MessageConsole console;
-	private MessageConsoleStream stream;
 	
 	public AmpleConsole() {
 		console = new MessageConsole("Ample Console", null);
-		stream = console.newMessageStream();
 	}
 	
 	public void activate() {
@@ -20,15 +16,11 @@ public class AmpleConsole {
 		console.activate();
 	}
 	
-	public void write(int b) throws IOException {
-		stream.write(b);
-	}
-	
 	public void clearConsole() {
 		console.clearConsole();
 	}
 	
-	public boolean isValid() {
-		return true;
+	public IOConsoleOutputStream newOutputStream() {
+		return console.newOutputStream();
 	}
 }

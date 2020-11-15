@@ -1,7 +1,6 @@
 package plugin.hardcoded.ample.decorator;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IDecoratorManager;
@@ -42,28 +41,7 @@ public class AmpleIconDecorator implements ILabelDecorator, ILightweightLabelDec
 				// Only applies to ample files
 				if(!file.getFileExtension().equals("ample")) return;
 				
-				boolean foundSource = false;
-				
-				IPath path = file.getProjectRelativePath();
-				int segments = path.segmentCount();
-				for(int i = 0; i < segments; i++) {
-					IFolder folder = null;
-					
-					try {
-						// TODO: We dont want this to throw exceptions
-						IPath test = path.uptoSegment(segments - i - 1);
-						folder = project.getProject().getFolder(test);
-					} catch(Exception e) {
-						break;
-					}
-					
-					if(project.hasSourceFolder(folder)) {
-						foundSource = true;
-						break;
-					}
-				}
-				
-				if(!foundSource) {
+				if(!project.checkFileSourceFolder(file)) {
 					configureDecoration(decoration);
 					decoration.addOverlay(AmplePreferences.SOURCE_FILE_DISABLED, IDecoration.REPLACE);
 				}

@@ -20,6 +20,7 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
+import plugin.hardcoded.ample.AmpleLogger;
 import plugin.hardcoded.ample.AmplePreferences;
 import plugin.hardcoded.ample.decorator.AmpleIconDecorator;
 
@@ -337,12 +338,12 @@ public class AmplePropertyPage extends PropertyPage implements IWorkbenchPropert
 			AmpleConfiguration doc = project.getConfiguration();
 			doc.updateSourceFolders(sourceFolders);
 			doc.setOutputFolder(project.getProject().getFolder(outputFolderText.getText()));
-			project.saveDocument();
+			doc.save();
 			
 			AmpleIconDecorator.refreshIcons();
 			project.getProject().touch(new NullProgressMonitor());
 		} catch(Exception e) {
-			e.printStackTrace();
+			AmpleLogger.log(e);
 		}
 	}
 }
