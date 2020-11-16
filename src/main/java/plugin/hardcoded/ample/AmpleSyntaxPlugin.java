@@ -1,8 +1,6 @@
 package plugin.hardcoded.ample;
 
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -40,7 +38,7 @@ public class AmpleSyntaxPlugin extends AbstractUIPlugin {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		InstanceScope.INSTANCE.getNode("plugin.hardcoded.ample.preferences");
+		// InstanceScope.INSTANCE.getNode("plugin.hardcoded.ample.preferences");
 		
 		AmplePreferences.dispose();
 	}
@@ -49,9 +47,5 @@ public class AmpleSyntaxPlugin extends AbstractUIPlugin {
 		super.start(context);
 		
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener, 63);
-	}
-
-	public static IPreferenceStore getPrefereceStore() {
-		return getDefault().getPreferenceStore();
 	}
 }

@@ -10,6 +10,8 @@ import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
@@ -24,6 +26,7 @@ import hardcoded.compiler.impl.IProgram;
 import hardcoded.compiler.parsetree.ParseTreeGenerator;
 import plugin.hardcoded.ample.AmpleLogger;
 import plugin.hardcoded.ample.AmplePreferences;
+import plugin.hardcoded.ample.AmpleSyntaxPlugin;
 import plugin.hardcoded.ample.core.AmpleCore;
 import plugin.hardcoded.ample.core.AmpleProject;
 import plugin.hardcoded.ample.outline.AmpleOutlinePage;
@@ -43,17 +46,34 @@ public class AmpleSyntaxEditor extends TextEditor implements IDocumentListener {
 //	@SuppressWarnings("unused")
 //	private ProjectionSupport projectionSupport;
 //	private Annotation[] oldAnnotations;
+	private final IPropertyChangeListener listener;
+	private final IPreferenceStore store;
+	
 	private AmpleSyntaxColor syntax;
 	private AmpleOutlinePage outlinePage;
 	private IProgram parseTree;
 	
 	public AmpleSyntaxEditor() {
-		super();
+		store = AmpleSyntaxPlugin.getDefault().getPreferenceStore();
 		syntax = new AmpleSyntaxColor();
+		syntax.setPreferenceStore(store);
 		outlinePage = new AmpleOutlinePage(this);
+		
 		
 		setSourceViewerConfiguration(syntax);
 //		setDocumentProvider(new AmpleDocumentProvider());
+		
+		listener = new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				ISourceViewer viewer = AmpleSyntaxEditor.this.getSourceViewer();
+				
+				if(viewer != null) {
+					syntax.propertyChange(event);
+					viewer.invalidateTextPresentation();
+				}
+			}
+		};
+		store.addPropertyChangeListener(listener);
 	}
 	
 	public void documentAboutToBeChanged(DocumentEvent event) {
@@ -62,6 +82,11 @@ public class AmpleSyntaxEditor extends TextEditor implements IDocumentListener {
 	
 	public void documentChanged(DocumentEvent event) {
 		// System.out.println("AmpleSyntaxEditor: documentChanged(DocumentEvent event) : [" + event + "]");
+	}
+	
+	public void dispose() {
+		super.dispose();
+		store.removePropertyChangeListener(listener);
 	}
 	
 	public void createPartControl(Composite parent) {

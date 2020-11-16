@@ -37,6 +37,9 @@
  <extension
        point="org.eclipse.core.runtime.preferences">
     <initializer
+          class="plugin.hardcoded.ample.initializers.AmplePreferenceInitializer">
+    </initializer>
+    <initializer
           class="plugin.hardcoded.ample.initializers.LirPreferenceInitializer">
     </initializer>
  </extension>
@@ -149,7 +152,6 @@
           file-extensions="hlir">
     </file-association>
     <content-type
-          describer="plugin.hardcoded.ample.describer.LIRDescriber"
           file-extensions="llir, lir"
           id="plugin.hardcoded.ample.core.content.llir"
           name="Low Level IR"

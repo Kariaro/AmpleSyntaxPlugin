@@ -8,14 +8,25 @@ import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
-import plugin.hardcoded.ample.rules.AmpleScanner;
+import plugin.hardcoded.ample.rules.AmpleScanner2;
 import plugin.hardcoded.ample.syntax.AmpleContentAssist;
+import pluhin.hardcoded.ample.rules.scanner.AmpleTextSourceViewerConfiguration;
 
-public class AmpleSyntaxColor extends TextSourceViewerConfiguration {
+public class AmpleSyntaxColor extends AmpleTextSourceViewerConfiguration {
+	// private AmpleScanner scanner;
+	private AmpleScanner2 scanner;
+	
+	public AmpleSyntaxColor() {
+		
+	}
+	
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
-		AmpleScanner scanner = new AmpleScanner();
+		if(scanner == null) {
+			// scanner = new AmpleScanner();
+			scanner = new AmpleScanner2(getPreferenceStore());
+		}
 		
 		PresentationReconciler pr = new PresentationReconciler();
 		DefaultDamagerRepairer ddr = new DefaultDamagerRepairer(scanner);
@@ -37,5 +48,11 @@ public class AmpleSyntaxColor extends TextSourceViewerConfiguration {
 		ContentAssistant assistant = new ContentAssistant();
 		assistant.setContentAssistProcessor(new AmpleContentAssist(), IDocument.DEFAULT_CONTENT_TYPE);
 		return assistant;
+	}
+	
+	public void propertyChange(PropertyChangeEvent event) {
+		if(scanner != null) {
+			scanner.updateRules();
+		}
 	}
 }

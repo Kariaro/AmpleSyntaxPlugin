@@ -9,8 +9,9 @@ import hardcoded.compiler.constants.Atom;
 import hardcoded.compiler.instruction.IRType;
 import plugin.hardcoded.ample.AmplePreferences;
 import plugin.hardcoded.ample.util.TokenUtils;
+import pluhin.hardcoded.ample.rules.scanner.AmpleRuleBasedScanner;
 
-public class LIRScanner extends RuleBasedScanner {
+public class LIRScanner extends AmpleRuleBasedScanner {
 	private static final String LABEL_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789"
 											+ "ABCDEFGHIJKLMNOPQRSTUVWXYZ_.:";
 	
@@ -144,13 +145,18 @@ public class LIRScanner extends RuleBasedScanner {
 	private IToken label_token;
 	
 	public LIRScanner(IPreferenceStore store) {
-		instruction_token = TokenUtils.getToken(store, AmplePreferences.LIR_COLOR_INSTRUCTIONS);
-		types_token = TokenUtils.getToken(store, AmplePreferences.LIR_COLOR_TYPES);
-		number_token = TokenUtils.getToken(store, AmplePreferences.LIR_COLOR_NUMBERS);
-		register_token = TokenUtils.getToken(store, AmplePreferences.LIR_COLOR_REGISTERS);
-		others_token = TokenUtils.getToken(store, AmplePreferences.LIR_COLOR_OTHERS);
-		bracketcontent_token = TokenUtils.getToken(store, AmplePreferences.LIR_COLOR_BRACKETCONTENT);
-		label_token = TokenUtils.getToken(store, AmplePreferences.LIR_COLOR_LABELS);
+		super(store);
+		updateRules();
+	}
+	
+	public void updateRules() {
+		instruction_token = TokenUtils.getToken(preferenceStore, AmplePreferences.LIR_COLOR_INSTRUCTIONS);
+		types_token = TokenUtils.getToken(preferenceStore, AmplePreferences.LIR_COLOR_TYPES);
+		number_token = TokenUtils.getToken(preferenceStore, AmplePreferences.LIR_COLOR_NUMBERS);
+		register_token = TokenUtils.getToken(preferenceStore, AmplePreferences.LIR_COLOR_REGISTERS);
+		others_token = TokenUtils.getToken(preferenceStore, AmplePreferences.LIR_COLOR_OTHERS);
+		bracketcontent_token = TokenUtils.getToken(preferenceStore, AmplePreferences.LIR_COLOR_BRACKETCONTENT);
+		label_token = TokenUtils.getToken(preferenceStore, AmplePreferences.LIR_COLOR_LABELS);
 		
 		WordRule insts = new WordRule(WORD_DETECTOR);
 		for(IRType inst : IRType.values()) {

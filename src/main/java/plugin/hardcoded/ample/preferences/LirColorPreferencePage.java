@@ -3,7 +3,7 @@ package plugin.hardcoded.ample.preferences;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import plugin.hardcoded.ample.AmplePreferences;
+import static plugin.hardcoded.ample.AmplePreferences.*;
 import plugin.hardcoded.ample.lir.LIRSyntaxColor;
 
 public class LirColorPreferencePage extends ColorPreferencePage implements IWorkbenchPreferencePage {
@@ -11,13 +11,13 @@ public class LirColorPreferencePage extends ColorPreferencePage implements IWork
 		super(new LIRSyntaxColor());
 		
 		TreeObject syntax = addNode("Syntax", false);
-		addNode(syntax, "Labels", AmplePreferences.LIR_COLOR_LABELS);
-		addNode(syntax, "Numbers", AmplePreferences.LIR_COLOR_NUMBERS);
-		addNode(syntax, "Registers", AmplePreferences.LIR_COLOR_REGISTERS);
-		addNode(syntax, "Bracket Content", AmplePreferences.LIR_COLOR_BRACKETCONTENT);
-		addNode(syntax, "Instructions", AmplePreferences.LIR_COLOR_INSTRUCTIONS);
-		addNode(syntax, "Types", AmplePreferences.LIR_COLOR_TYPES);
-		addNode(syntax, "Others", AmplePreferences.LIR_COLOR_OTHERS, true);
+		addNode(syntax, "Labels", LIR_COLOR_LABELS);
+		addNode(syntax, "Numbers", LIR_COLOR_NUMBERS);
+		addNode(syntax, "Registers", LIR_COLOR_REGISTERS);
+		addNode(syntax, "Bracket Content", LIR_COLOR_BRACKETCONTENT);
+		addNode(syntax, "Instructions", LIR_COLOR_INSTRUCTIONS);
+		addNode(syntax, "Types", LIR_COLOR_TYPES);
+		addNode(syntax, "Others", LIR_COLOR_OTHERS, true);
 	}
 	
 	@Override

@@ -1,20 +1,27 @@
 package plugin.hardcoded.ample.lir;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
-import plugin.hardcoded.ample.util.IPreferenceObject;
+import pluhin.hardcoded.ample.rules.scanner.AmpleTextSourceViewerConfiguration;
 
-public class LIRSyntaxColor extends TextSourceViewerConfiguration implements IPreferenceObject {
-	private IPreferenceStore store;
+public class LIRSyntaxColor extends AmpleTextSourceViewerConfiguration {
+	private LIRScanner scanner;
+	
+	public LIRSyntaxColor() {
+		
+	}
+	
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
-		LIRScanner scanner = new LIRScanner(store);
+		if(scanner == null) {
+			scanner = new LIRScanner(getPreferenceStore());
+		}
+		
 		PresentationReconciler pr = new PresentationReconciler();
 		DefaultDamagerRepairer ddr = new DefaultDamagerRepairer(scanner);
 		pr.setRepairer(ddr, IDocument.DEFAULT_CONTENT_TYPE);
@@ -31,11 +38,9 @@ public class LIRSyntaxColor extends TextSourceViewerConfiguration implements IPr
 		return super.getReconciler(sourceViewer);
 	}
 	
-	public IPreferenceStore getPreferenceStore() {
-		return store;
-	}
-	
-	public void setPreferenceStore(IPreferenceStore store) {
-		this.store = store;
+	public void propertyChange(PropertyChangeEvent event) {
+		if(scanner != null) {
+			scanner.updateRules();
+		}
 	}
 }

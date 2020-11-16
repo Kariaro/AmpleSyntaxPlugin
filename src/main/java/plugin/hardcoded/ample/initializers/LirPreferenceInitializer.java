@@ -9,7 +9,12 @@ import plugin.hardcoded.ample.AmpleSyntaxPlugin;
 
 public class LirPreferenceInitializer extends AbstractPreferenceInitializer {
 	public void initializeDefaultPreferences() {
-		IPreferenceStore store = AmpleSyntaxPlugin.getPrefereceStore();
+		IPreferenceStore store = AmpleSyntaxPlugin.getDefault().getPreferenceStore();
+		
+//		ITheme currentTheme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
+//		System.out.println(currentTheme);
+//		System.out.println(currentTheme.getId());
+//		System.out.println(currentTheme.getLabel());
 		
 		store.setDefault(LIR_COLOR_LABELS, LIR_COLOR_DEF_LABELS);
 		store.setDefault(LIR_COLOR_NUMBERS, LIR_COLOR_DEF_NUMBERS);

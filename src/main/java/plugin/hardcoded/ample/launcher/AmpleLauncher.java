@@ -12,6 +12,7 @@ import hardcoded.compiler.AmpleCompilerBuild;
 import hardcoded.compiler.BuildConfiguration;
 import hardcoded.compiler.instruction.IRProgram;
 import hardcoded.vm.AmpleVm;
+import plugin.hardcoded.ample.AmpleLogger;
 import plugin.hardcoded.ample.AmpleSyntaxPlugin;
 import plugin.hardcoded.ample.console.AmpleConsole;
 import plugin.hardcoded.ample.core.AmpleCore;
@@ -40,26 +41,31 @@ public class AmpleLauncher {
 			}
 			config.setOutputFormat(OutputFormat.IR);
 			
-			IFile outputFile = project.getConfiguration().getOutputFolder().getFile("output.lir");
-			config.setOutputFile(outputFile.getLocation().toFile());
-			
-			System.out.println("Launching from file: " + source);
-			System.out.println("=========================================================================================");
-			
-			// TODO: What do we do if we get stuch here?
-			// TODO: Should the user be notified of build errors?
-			
-			AmpleCompilerBuild build = new AmpleCompilerBuild();
-			IRProgram program = build.build(config);
-			AmpleVm.run(program, new PrintStream(stream));
+			IFolder outputFolder = project.getConfiguration().getOutputFolder();
+			if(outputFolder != null) {
+				IFile outputFile = project.getConfiguration().getOutputFolder().getFile("output.lir");
+				config.setOutputFile(outputFile.getLocation().toFile());
+				
+				System.out.println("Launching from file: " + source);
+				System.out.println("=========================================================================================");
+				
+				// TODO: What do we do if we get stuch here?
+				// TODO: Should the user be notified of build errors?
+				
+				AmpleCompilerBuild build = new AmpleCompilerBuild();
+				IRProgram program = build.build(config);
+				AmpleVm.run(program, new PrintStream(stream));
+			} else {
+				System.out.println("Invalid output folder 'null' ");
+			}
 		} catch(Exception e) {
-			e.printStackTrace();
+			AmpleLogger.log(e);
 		}
 		
 		try {
 			stream.close();
 		} catch(IOException e) {
-			e.printStackTrace();
+			AmpleLogger.log(e);
 		}
 	}
 }

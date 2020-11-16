@@ -33,6 +33,7 @@ public class AmplePreferences {
 	public static final String LIR_COLOR_INSTRUCTIONS			= getPref("lir.colors.instructions");
 	public static final String LIR_COLOR_TYPES					= getPref("lir.colors.types");
 	public static final String LIR_COLOR_OTHERS					= getPref("lir.colors.others");
+	// default theme
 	public static final String LIR_COLOR_DEF_LABELS				= getHighlight(95, 97, 76, ITALIC);
 	public static final String LIR_COLOR_DEF_NUMBERS			= getHighlight(0, 0, 0);
 	public static final String LIR_COLOR_DEF_REGISTERS			= getHighlight(95, 97, 76);
@@ -40,14 +41,57 @@ public class AmplePreferences {
 	public static final String LIR_COLOR_DEF_INSTRUCTIONS		= getHighlight(85, 52, 144, BOLD);
 	public static final String LIR_COLOR_DEF_TYPES				= getHighlight(112, 0, 255);
 	public static final String LIR_COLOR_DEF_OTHERS				= getHighlight(0, 0, 0);
+	// dark theme
+	public static final String LIR_COLOR_DDEF_LABELS			= getHighlight(255, 255, 128, ITALIC);
+	public static final String LIR_COLOR_DDEF_NUMBERS			= getHighlight(192, 192, 192);
+	public static final String LIR_COLOR_DDEF_REGISTERS			= getHighlight(234, 77, 0);
+	public static final String LIR_COLOR_DDEF_BRACKETCONTENT	= getHighlight(219, 216, 164, BOLD | ITALIC);
+	public static final String LIR_COLOR_DDEF_INSTRUCTIONS		= getHighlight(193, 166, 140, BOLD);
+	public static final String LIR_COLOR_DDEF_TYPES				= getHighlight(182, 109, 109);
+	public static final String LIR_COLOR_DDEF_OTHERS			= getHighlight(192, 192, 192);
 	
 	
 	// ample syntax coloring preferences
+	public static final String AMPLE_COLOR_KEYWORDS				= getPref("ample.colors.keywords");
+	public static final String AMPLE_COLOR_PRIMITIVES			= getPref("ample.colors.primitives");
+	public static final String AMPLE_COLOR_STRINGS				= getPref("ample.colors.strings");
+	public static final String AMPLE_COLOR_CHARS				= getPref("ample.colors.chars");
+	public static final String AMPLE_COLOR_PROCESSOR			= getPref("ample.colors.processor");
+	public static final String AMPLE_COLOR_LITERALS				= getPref("ample.colors.literals");
+	public static final String AMPLE_COLOR_NUMBERS				= getPref("ample.colors.numbers");
+	public static final String AMPLE_COLOR_SL_COMMENT			= getPref("ample.colors.singlelinecomment");
+	public static final String AMPLE_COLOR_ML_COMMENT			= getPref("ample.colors.multilinecomment");
+	public static final String AMPLE_COLOR_BRACKETS				= getPref("ample.colors.brackets");
+	public static final String AMPLE_COLOR_OTHERS				= getPref("ample.colors.others");
+	// default theme
+	public static final String AMPLE_COLOR_DEF_KEYWORDS			= getHighlight(112, 0, 255, BOLD);
+	public static final String AMPLE_COLOR_DEF_PRIMITIVES		= getHighlight(112, 0, 255);
+	public static final String AMPLE_COLOR_DEF_STRINGS			= getHighlight(88, 175, 107);
+	public static final String AMPLE_COLOR_DEF_CHARS			= getHighlight(88, 175, 107);
+	public static final String AMPLE_COLOR_DEF_PROCESSOR		= getHighlight(193, 110, 0);
+	public static final String AMPLE_COLOR_DEF_LITERALS			= getHighlight(33, 33, 33);
+	public static final String AMPLE_COLOR_DEF_NUMBERS			= getHighlight(0, 0, 0);
+	public static final String AMPLE_COLOR_DEF_SL_COMMENT		= getHighlight(127, 127, 0);
+	public static final String AMPLE_COLOR_DEF_ML_COMMENT		= getHighlight(65, 140, 255);
+	public static final String AMPLE_COLOR_DEF_BRACKETS			= getHighlight(0, 0, 0);
+	public static final String AMPLE_COLOR_DEF_OTHERS			= getHighlight(0, 0, 0);
+	// dark theme
+	public static final String AMPLE_COLOR_DDEF_KEYWORDS		= getHighlight(255, 128, 128, BOLD);
+	public static final String AMPLE_COLOR_DDEF_PRIMITIVES		= getHighlight(255, 128, 128);
+	public static final String AMPLE_COLOR_DDEF_STRINGS			= getHighlight(88, 175, 107);
+	public static final String AMPLE_COLOR_DDEF_CHARS			= getHighlight(88, 175, 107);
+	public static final String AMPLE_COLOR_DDEF_PROCESSOR		= getHighlight(217, 217, 0);
+	public static final String AMPLE_COLOR_DDEF_LITERALS		= getHighlight(255, 255, 255);
+	public static final String AMPLE_COLOR_DDEF_NUMBERS			= getHighlight(255, 255, 255);
+	public static final String AMPLE_COLOR_DDEF_SL_COMMENT		= getHighlight(69, 186, 128);
+	public static final String AMPLE_COLOR_DDEF_ML_COMMENT		= getHighlight(65, 140, 255);
+	public static final String AMPLE_COLOR_DDEF_BRACKETS		= getHighlight(255, 255, 255);
+	public static final String AMPLE_COLOR_DDEF_OTHERS			= getHighlight(162, 162, 162);
+	
 	
 	
 	
 	// TODO: Color cache.
-	
 	private static Map<ImageDescriptor, Image> cached_images = new HashMap<>();
 	public static final ImageDescriptor PROJECT_DECAL			= getResourceImage("icons/ovr16/projectdecal.png");
 	public static final ImageDescriptor OUTLINE_BLOB			= getResourceImage("icons/ample_outline_blob_2.png");
@@ -87,8 +131,6 @@ public class AmplePreferences {
 		if(overlayImage == null) return getImage(baseImage);
 		
 		String custom_id = baseImage.hashCode() + ":" + sharedImage;
-		System.out.println("???? " + custom_id);
-		
 		Image image = cached_overlay.get(custom_id);
 		
 		if(image == null || image.isDisposed()) {
