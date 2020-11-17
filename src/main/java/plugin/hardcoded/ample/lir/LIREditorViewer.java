@@ -9,6 +9,7 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.TextEditor;
 
+import plugin.hardcoded.ample.AmplePreferences;
 import plugin.hardcoded.ample.AmpleSyntaxPlugin;
 
 public class LIREditorViewer extends TextEditor {
@@ -28,6 +29,7 @@ public class LIREditorViewer extends TextEditor {
 		
 		listener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
+				if(!event.getProperty().startsWith(AmplePreferences.LIR_COLOR_ID)) return;
 				ISourceViewer viewer = LIREditorViewer.this.getSourceViewer();
 				
 				if(viewer != null) {

@@ -1,8 +1,9 @@
-package plugin.hardcoded.ample;
+package plugin.hardcoded.ample.util;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.*;
 
+@Deprecated(forRemoval = true)
 public class AmpleUtils {
 	public static IEditorPart getActiveEditor() {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();

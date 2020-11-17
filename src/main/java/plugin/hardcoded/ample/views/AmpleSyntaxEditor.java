@@ -65,6 +65,7 @@ public class AmpleSyntaxEditor extends TextEditor implements IDocumentListener {
 		
 		listener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
+				if(!event.getProperty().startsWith(AmplePreferences.AMPLE_COLOR_ID)) return;
 				ISourceViewer viewer = AmpleSyntaxEditor.this.getSourceViewer();
 				
 				if(viewer != null) {

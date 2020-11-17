@@ -10,13 +10,11 @@ import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-import plugin.hardcoded.ample.rules.AmpleScanner2;
 import plugin.hardcoded.ample.syntax.AmpleContentAssist;
 import pluhin.hardcoded.ample.rules.scanner.AmpleTextSourceViewerConfiguration;
 
 public class AmpleSyntaxColor extends AmpleTextSourceViewerConfiguration {
-	// private AmpleScanner scanner;
-	private AmpleScanner2 scanner;
+	private AmpleScanner scanner;
 	
 	public AmpleSyntaxColor() {
 		
@@ -24,8 +22,7 @@ public class AmpleSyntaxColor extends AmpleTextSourceViewerConfiguration {
 	
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		if(scanner == null) {
-			// scanner = new AmpleScanner();
-			scanner = new AmpleScanner2(getPreferenceStore());
+			scanner = new AmpleScanner(getPreferenceStore());
 		}
 		
 		PresentationReconciler pr = new PresentationReconciler();

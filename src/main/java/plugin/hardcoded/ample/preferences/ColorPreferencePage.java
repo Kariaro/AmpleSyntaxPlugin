@@ -163,6 +163,7 @@ public abstract class ColorPreferencePage extends PreferencePage implements IWor
 	private Button italic_button;
 	private Button strikethrough_button;
 	private Button underline_button;
+	private Button restore_default_button;
 	private Document document;
 	
 	private TreeObject selection;
@@ -276,6 +277,7 @@ public abstract class ColorPreferencePage extends PreferencePage implements IWor
 			italic_button.setEnabled(false);
 			strikethrough_button.setEnabled(false);
 			underline_button.setEnabled(false);
+			restore_default_button.setEnabled(false);
 			
 			color_button.setColorValue(new RGB(0, 0, 0));
 			enable_button.setSelection(false);
@@ -301,6 +303,7 @@ public abstract class ColorPreferencePage extends PreferencePage implements IWor
 		italic_button.setEnabled(isEnabled);
 		strikethrough_button.setEnabled(isEnabled);
 		underline_button.setEnabled(isEnabled);
+		restore_default_button.setEnabled(isEnabled);
 		
 		HighlightColor item = selection.item;
 		enable_button.setSelection(isEnabled);
@@ -404,7 +407,7 @@ public abstract class ColorPreferencePage extends PreferencePage implements IWor
 				gd.horizontalIndent = LayoutConstants.getIndent();
 				gd.horizontalSpan = 2;
 				strikethrough_button = new Button(buttonsPanel, SWT.CHECK);
-				strikethrough_button.setText("Strikethough");
+				strikethrough_button.setText("Strikethrough");
 				strikethrough_button.setLayoutData(gd);
 				strikethrough_button.setEnabled(false);
 				
@@ -416,6 +419,15 @@ public abstract class ColorPreferencePage extends PreferencePage implements IWor
 				underline_button.setText("Underline");
 				underline_button.setLayoutData(gd);
 				underline_button.setEnabled(false);
+				
+				
+				gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+				gd.horizontalIndent = LayoutConstants.getIndent();
+				gd.horizontalSpan = 2;
+				restore_default_button = new Button(buttonsPanel, SWT.PUSH);
+				restore_default_button.setText("Restore Default");
+				restore_default_button.setLayoutData(gd);
+				restore_default_button.setEnabled(false);
 				
 				enable_button.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
@@ -431,6 +443,7 @@ public abstract class ColorPreferencePage extends PreferencePage implements IWor
 						italic_button.setEnabled(enable);
 						strikethrough_button.setEnabled(enable);
 						underline_button.setEnabled(enable);
+						restore_default_button.setEnabled(enable);
 					}
 				});
 				color_button.getButton().addSelectionListener(new SelectionAdapter() {
@@ -470,6 +483,18 @@ public abstract class ColorPreferencePage extends PreferencePage implements IWor
 						if(hasItem()) {
 							selection.item.underline = underline_button.getSelection();
 							update(selection);
+						}
+					}
+				});
+				restore_default_button.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						if(hasItem()) {
+							IPreferenceStore store = AmpleSyntaxPlugin.getDefault().getPreferenceStore();
+							store.setToDefault(selection.id);
+							storeTemp.removeValue(selection.id);
+							selection.item = new HighlightColor(store.getDefaultString(selection.id));
+							updateButtonsWithSelection();
+							viewer.refresh();
 						}
 					}
 				});

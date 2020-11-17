@@ -97,4 +97,9 @@ public class TempPreferenceStore implements IPreferenceStore {
 		if(clazz == String.class) return clazz.cast(def.getString(name));
 		return null;
 	}
+
+	public void removeValue(String id) {
+		Object oldValue = props.remove(id);
+		firePropertyChangeEvent(id, oldValue, null);
+	}
 }

@@ -11,6 +11,7 @@ import org.eclipse.ui.PlatformUI;
 
 public class AmplePreferences {
 	public static final String PLUGIN_ID = "plugin.hardcoded.ample";
+	public static final String CURRENT_COLOR_THEME				= "plugin.hardcoded.ample.theme";
 	
 	public static final String MATCHING_BRACKETS				= ".matching_brackets";
 	public static final String MATCHING_BRACKETS_COLOR			= ".matching_brackets_color";
@@ -95,7 +96,6 @@ public class AmplePreferences {
 	private static Map<ImageDescriptor, Image> cached_images = new HashMap<>();
 	public static final ImageDescriptor PROJECT_DECAL			= getResourceImage("icons/ovr16/projectdecal.png");
 	public static final ImageDescriptor OUTLINE_BLOB			= getResourceImage("icons/ample_outline_blob_2.png");
-	
 	public static final ImageDescriptor PROJECT_ICON			= getResourceImage("icons/obj16/project.png");
 	public static final ImageDescriptor LIBRARY_ICON			= getResourceImage("icons/obj16/library.png");
 	public static final ImageDescriptor FOLDER_ICON				= getResourceImage("icons/obj16/folder.png");

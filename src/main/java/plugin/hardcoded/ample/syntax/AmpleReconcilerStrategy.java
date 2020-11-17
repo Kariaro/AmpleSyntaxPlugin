@@ -13,8 +13,9 @@ import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.swt.widgets.Display;
 
+import plugin.hardcoded.ample.AmpleSyntaxPlugin;
 import plugin.hardcoded.ample.SyntaxSet;
-import plugin.hardcoded.ample.rules.AmpleScanner;
+import plugin.hardcoded.ample.views.AmpleScanner;
 import plugin.hardcoded.ample.views.AmpleSyntaxEditor;
 
 public class AmpleReconcilerStrategy implements IReconcilingStrategy {
@@ -37,7 +38,7 @@ public class AmpleReconcilerStrategy implements IReconcilingStrategy {
 	private void calculatePositions() {
 		list.clear();
 		
-		AmpleScanner scanner = new AmpleScanner();
+		AmpleScanner scanner = new AmpleScanner(AmpleSyntaxPlugin.getDefault().getPreferenceStore());
 		scanner.setRange(document, 0, document.getLength());
 		
 		LinkedList<Integer> set = new LinkedList<>();

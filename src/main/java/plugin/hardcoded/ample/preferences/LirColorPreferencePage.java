@@ -17,7 +17,7 @@ public class LirColorPreferencePage extends ColorPreferencePage implements IWork
 		addNode(syntax, "Bracket Content", LIR_COLOR_BRACKETCONTENT);
 		addNode(syntax, "Instructions", LIR_COLOR_INSTRUCTIONS);
 		addNode(syntax, "Types", LIR_COLOR_TYPES);
-		addNode(syntax, "Others", LIR_COLOR_OTHERS, true);
+		addNode(syntax, "Others", LIR_COLOR_OTHERS);
 	}
 	
 	@Override

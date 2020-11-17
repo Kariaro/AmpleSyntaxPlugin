@@ -37,11 +37,24 @@
  <extension
        point="org.eclipse.core.runtime.preferences">
     <initializer
-          class="plugin.hardcoded.ample.initializers.AmplePreferenceInitializer">
+          class="plugin.hardcoded.ample.AmplePreferenceInitializer">
     </initializer>
-    <initializer
-          class="plugin.hardcoded.ample.initializers.LirPreferenceInitializer">
-    </initializer>
+ </extension>
+ <extension
+       id="plugin.hardcoded.ample.theme"
+       point="org.eclipse.e4.ui.css.swt.theme">
+    <stylesheet
+          uri="css/dark_theme.css">
+       <themeid
+             refid="org.eclipse.e4.ui.css.theme.e4_dark">
+       </themeid>
+    </stylesheet>
+    <stylesheet
+          uri="css/light_theme.css">
+       <themeid
+             refid="org.eclipse.e4.ui.css.theme.e4_default">
+       </themeid>
+    </stylesheet>
  </extension>
  <extension
        point="org.eclipse.ui.preferencePages">

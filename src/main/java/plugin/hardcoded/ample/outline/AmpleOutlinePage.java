@@ -1,9 +1,9 @@
 package plugin.hardcoded.ample.outline;
 
 import java.io.File;
-import java.util.Objects;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -37,7 +37,8 @@ public class AmpleOutlinePage implements IContentOutlinePage {
 	};
 	
 	public AmpleOutlinePage(AmpleSyntaxEditor editor) {
-		this.editor = Objects.requireNonNull(editor, "The editor provided was null");
+		Assert.isNotNull(editor, "The editor provided was null");
+		this.editor = editor;
 	}
 	
 	public void createControl(Composite parent) {

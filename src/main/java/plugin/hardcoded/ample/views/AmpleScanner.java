@@ -1,4 +1,4 @@
-package plugin.hardcoded.ample.rules;
+package plugin.hardcoded.ample.views;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
@@ -10,7 +10,7 @@ import plugin.hardcoded.ample.util.TokenUtils;
 import plugin.hardcoded.ample.util.WordDetectors;
 import pluhin.hardcoded.ample.rules.scanner.AmpleRuleBasedScanner;
 
-public class AmpleScanner2 extends AmpleRuleBasedScanner {
+public class AmpleScanner extends AmpleRuleBasedScanner {
 	private static final String[] KEYWORDS = {
 		"while", "for", "if", "else", "switch", "case", "default",
 		"continue", "break", "return", "export", "unsigned", "signed",
@@ -22,7 +22,7 @@ public class AmpleScanner2 extends AmpleRuleBasedScanner {
 		"double", "float"
 	};
 	
-	public AmpleScanner2(IPreferenceStore store) {
+	public AmpleScanner(IPreferenceStore store) {
 		super(store);
 		updateRules();
 	}

@@ -67,27 +67,6 @@ public class AmpleOutlineContentProvider implements ITreeContentProvider, ILabel
 	
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if(newInput == null) return;
-		// Only get's called when the view changed.. This is
-		
-		// System.out.println("InputChanged: " + newInput.getClass());
-		
-//		if(newInput instanceof IFunction) {
-//			IFunction function = (IFunction)newInput;
-//			// Set the selection of the curent code file.
-//			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-//			IEditorPart activeEditor = window.getActivePage().getActiveEditor();
-//			
-//			if(activeEditor != null) {
-//				Control control = activeEditor.getAdapter(Control.class);
-//				
-//				if(control instanceof StyledText) {
-//					StyledText text = (StyledText)control;
-//					
-//					int offset = text.getOffsetAtLine(function.getLineIndex());
-//					text.setCaretOffset(offset);
-//				}
-//			}
-//		}
 	}
 	
 	public boolean isLabelProperty(Object element, String property) { return false; }

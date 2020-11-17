@@ -12,11 +12,6 @@ public class AmpleColorPreferencePage extends ColorPreferencePage implements IWo
 	public AmpleColorPreferencePage() {
 		super(new AmpleSyntaxColor());
 		
-//		ITheme currentTheme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
-//		System.out.println(currentTheme);
-//		System.out.println(currentTheme.getId());
-//		System.out.println(currentTheme.getLabel());
-		
 		TreeObject syntax = addNode("Syntax", false);
 		addNode(syntax, "Brackets", AMPLE_COLOR_BRACKETS);
 		addNode(syntax, "Chars", AMPLE_COLOR_CHARS);
@@ -26,7 +21,7 @@ public class AmpleColorPreferencePage extends ColorPreferencePage implements IWo
 		addNode(syntax, "Processor", AMPLE_COLOR_PROCESSOR);
 		addNode(syntax, "Literals", AMPLE_COLOR_LITERALS);
 		addNode(syntax, "Numbers", AMPLE_COLOR_NUMBERS);
-		addNode(syntax, "Others", AMPLE_COLOR_OTHERS, true);
+		addNode(syntax, "Others", AMPLE_COLOR_OTHERS);
 
 		TreeObject comments = addNode("Comments", false);
 		addNode(comments, "Singleline Comment", AMPLE_COLOR_SL_COMMENT);
