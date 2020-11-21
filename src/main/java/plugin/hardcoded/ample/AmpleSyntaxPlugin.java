@@ -8,8 +8,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import plugin.hardcoded.ample.console.AmpleConsole;
-
 /**
  * A plugin implementing the ample language and syntax highlighting.
  * 
@@ -20,10 +18,6 @@ public class AmpleSyntaxPlugin extends AbstractUIPlugin {
 	
 	private IPropertyChangeListener themeChange;
 	private IPreferenceStore store;
-	
-	// @Deprecated
-	// public AmpleResourceListener resourceListener = new AmpleResourceListener();
-	public AmpleConsole console = new AmpleConsole();
 	
 	public AmpleSyntaxPlugin() {
 		super();
@@ -40,20 +34,12 @@ public class AmpleSyntaxPlugin extends AbstractUIPlugin {
 	
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
-//		try {
-//			ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
-//		} catch(Exception e) {
-//			e.printStackTrace();
-//		}
-		
 		AmplePreferences.dispose();
 		store.removePropertyChangeListener(themeChange);
 	}
 	
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		
-		// ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener, 63);
 		store = getPreferenceStore();
 		
 		themeChange = new IPropertyChangeListener() {

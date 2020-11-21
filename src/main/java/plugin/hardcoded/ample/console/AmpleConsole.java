@@ -2,25 +2,55 @@ package plugin.hardcoded.ample.console;
 
 import org.eclipse.ui.console.*;
 
-public class AmpleConsole {
-	public MessageConsole console;
+import plugin.hardcoded.ample.launcher.AmpleProcess;
+
+public class AmpleConsole extends TextConsole {
+	public static final String P_PROCESS_RUNNING = "plugin.hardcoded.ample.console.P_PROCESS_RUNNING";
+	public static final String P_PROCESS_TERMINATED = "plugin.hardcoded.ample.console.P_PROCESS_TERMINATED";
+	
+	private AmpleConsolePartitioner partitioner;
+	private IConsoleManager consoleManager;
+	private AmpleProcess process;
 	
 	public AmpleConsole() {
-		console = new MessageConsole("Ample Console", null);
+		super("Ample Console", null, null, true);
+		this.consoleManager = ConsolePlugin.getDefault().getConsoleManager();
+		
+		partitioner = new AmpleConsolePartitioner(this);
+		partitioner.connect(getDocument());
+	}
+
+	/**
+	 * Add this console to the console manager
+	 */
+	public void addThisConsole() {
+		consoleManager.addConsoles( new IConsole[] { this } );
 	}
 	
-	public void activate() {
-		IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
-		manager.addConsoles(new IConsole[] { console });
-		manager.showConsoleView(console);
-		console.activate();
+	public void setActiveProcess(AmpleProcess process) {
+		this.process = process;
+		
+		// FIXME: Do not use null to indicate that the thread was terminated.
+		if(process == null) {
+			firePropertyChange(this, P_PROCESS_TERMINATED, null, null);
+		} else {
+			firePropertyChange(this, P_PROCESS_RUNNING, null, null);
+		}
 	}
 	
-	public void clearConsole() {
-		console.clearConsole();
+	public AmpleProcess getActiveProcess() {
+		return process;
 	}
 	
-	public IOConsoleOutputStream newOutputStream() {
-		return console.newOutputStream();
+	public AmpleConsolePartitioner getPartitioner() {
+		return partitioner;
+	}
+
+	public boolean hasActiveProcess() {
+		if(process != null) {
+			return process.isRunning();
+		}
+		
+		return false;
 	}
 }

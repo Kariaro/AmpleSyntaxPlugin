@@ -13,8 +13,8 @@ import pluhin.hardcoded.ample.rules.scanner.AmpleRuleBasedScanner;
 public class AmpleScanner extends AmpleRuleBasedScanner {
 	private static final String[] KEYWORDS = {
 		"while", "for", "if", "else", "switch", "case", "default",
-		"continue", "break", "return", "export", "unsigned", "signed",
-		"class", "inline"
+		"export", "unsigned", "signed", "class", "inline",
+		"continue", "break", "return", "goto"
 	};
 	
 	private static final String[] PRIMITIVES = {

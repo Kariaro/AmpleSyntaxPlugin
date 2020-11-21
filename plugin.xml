@@ -451,6 +451,17 @@
        </menu>
     </menuContribution>
  </extension>
+ <extension
+       point="org.eclipse.ui.console.consolePageParticipants">
+    <consolePageParticipant
+          class="plugin.hardcoded.ample.console.AmpleConsoleActions"
+          id="plugin.hardcoded.ample.console.pageParticipant">
+       <enablement>
+          <instanceof
+                value="plugin.hardcoded.ample.console.AmpleConsole">
+          </instanceof></enablement>
+    </consolePageParticipant>
+ </extension>
 
  
 </plugin>

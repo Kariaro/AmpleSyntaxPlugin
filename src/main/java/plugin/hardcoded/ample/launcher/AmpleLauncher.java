@@ -1,71 +1,68 @@
 package plugin.hardcoded.ample.launcher;
 
-import java.io.IOException;
-import java.io.PrintStream;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.ui.console.IOConsoleOutputStream;
 
 import hardcoded.OutputFormat;
 import hardcoded.compiler.AmpleCompilerBuild;
 import hardcoded.compiler.BuildConfiguration;
 import hardcoded.compiler.instruction.IRProgram;
-import hardcoded.vm.AmpleVm;
-import plugin.hardcoded.ample.AmpleLogger;
-import plugin.hardcoded.ample.AmpleSyntaxPlugin;
 import plugin.hardcoded.ample.console.AmpleConsole;
 import plugin.hardcoded.ample.core.AmpleCore;
 import plugin.hardcoded.ample.core.AmpleProject;
 
 public class AmpleLauncher {
-	public static void run(IFile source, String mode) {
-		if(source == null) return;
+	private static IRProgram buildProgram(IFile source) {
+		if(source == null) return null;
 		
 		AmpleProject project = AmpleCore.getAmpleProject(source);
-		if(project == null) return;
+		if(project == null) return null;
 		
-		// TODO: Read the projects launch configurations and if they are absent, generate a new configuration entry in the run/debug panels.
+		// Create build configuration
+		BuildConfiguration config = new BuildConfiguration();
+		config.setWorkingDirectory(project.getProject().getLocation().toFile());
+		config.setStartFile(source.getProjectRelativePath().toOSString());
+		for(IFolder folder : project.getSourceFolders()) {
+			config.addSourceFolder(folder.getProjectRelativePath().toOSString());
+		}
+		config.setOutputFormat(OutputFormat.IR);
 		
-		AmpleConsole console = AmpleSyntaxPlugin.getDefault().console;
-		console.activate();
-		console.clearConsole();
-		IOConsoleOutputStream stream = console.newOutputStream();
+		IFolder outputFolder = project.getConfiguration().getOutputFolder();
+		if(outputFolder != null) {
+			IFile outputFile = project.getConfiguration().getOutputFolder().getFile("output.lir");
+			config.setOutputFile(outputFile.getLocation().toFile());
+		}
 		
-		try {
-			BuildConfiguration config = new BuildConfiguration();
-			config.setWorkingDirectory(project.getProject().getLocation().toFile());
-			config.setStartFile(source.getProjectRelativePath().toOSString());
-			for(IFolder folder : project.getSourceFolders()) {
-				config.addSourceFolder(folder.getProjectRelativePath().toOSString());
-			}
-			config.setOutputFormat(OutputFormat.IR);
+		if(config.isValid()) {
+			System.out.println("Launching from file: " + source);
+			System.out.println("=========================================================================================");
 			
-			IFolder outputFolder = project.getConfiguration().getOutputFolder();
-			if(outputFolder != null) {
-				IFile outputFile = project.getConfiguration().getOutputFolder().getFile("output.lir");
-				config.setOutputFile(outputFile.getLocation().toFile());
-				
-				System.out.println("Launching from file: " + source);
-				System.out.println("=========================================================================================");
-				
-				// TODO: What do we do if we get stuch here?
-				// TODO: Should the user be notified of build errors?
-				
-				AmpleCompilerBuild build = new AmpleCompilerBuild();
-				IRProgram program = build.build(config);
-				AmpleVm.run(program, new PrintStream(stream));
-			} else {
-				System.out.println("Invalid output folder 'null' ");
+			AmpleCompilerBuild build = new AmpleCompilerBuild();
+			try {
+				return build.build(config);
+			} catch(Exception e) {
+				e.printStackTrace();
 			}
-		} catch(Exception e) {
-			AmpleLogger.log(e);
 		}
 		
-		try {
-			stream.close();
-		} catch(IOException e) {
-			AmpleLogger.log(e);
-		}
+		return null;
+	}
+	
+	public static void run(IFile source, String mode) {
+		IRProgram program = buildProgram(source);
+		if(program == null) return;
+		
+		AmpleConsole console = new AmpleConsole();
+		console.addThisConsole();
+		
+		AmpleProcess process = new AmpleProcess(program);
+		process.setOutputStream(console.getPartitioner());
+		console.setActiveProcess(process);
+		process.addTerminateHook(() -> {
+			System.out.println("[ Flushing and closing the console output stream ]");
+			
+			console.firePropertyChange(console, AmpleConsole.P_PROCESS_TERMINATED, null, null);
+		});
+		process.start();
 	}
 }

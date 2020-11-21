@@ -103,6 +103,13 @@ public class AmplePreferences {
 	public static final ImageDescriptor SOURCE_FILE_DISABLED	= getResourceImage("icons/obj16/sourcefile_disabled.png");
 	public static final ImageDescriptor SOURCE_FOLDER			= getResourceImage("icons/obj16/sourcefolder.png");
 	
+	public static final ImageDescriptor ENABLED_TERMINATE			= getResourceImage("icons/elcl16/terminate.png");
+	public static final ImageDescriptor DISABLED_TERMINATE			= getResourceImage("icons/dlcl16/terminate.png");
+	public static final ImageDescriptor ENABLED_REMOVE_LAUNCH		= getResourceImage("icons/elcl16/remove.png");
+	public static final ImageDescriptor DISABLED_REMOVE_LAUNCH		= getResourceImage("icons/dlcl16/remove.png");
+	public static final ImageDescriptor ENABLED_REMOVEALL_LAUNCH	= getResourceImage("icons/elcl16/removeall.png");
+	public static final ImageDescriptor DISABLED_REMOVEALL_LAUNCH	= getResourceImage("icons/dlcl16/removeall.png");
+	
 	static void dispose() {
 		// We don't need to dispose any of these probably :s
 //		for(Image image : cached_images.values()) {

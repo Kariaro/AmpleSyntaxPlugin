@@ -1,13 +1,13 @@
 package plugin.hardcoded.ample.lir;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
@@ -28,8 +28,8 @@ public class LIRDocumentProvider extends AbstractDocumentProvider {
 			try(InputStream stream = storage.getContents()) {
 				String string = processInput(IRSerializer.read(stream));
 				document.set(string);
-			} catch(IOException e) {
-				AmpleLogger.log(e);
+			} catch(Throwable t) {
+				AmpleLogger.log("Failed to load lir file because of errors. " + t.getMessage());
 			}
 		}
 		

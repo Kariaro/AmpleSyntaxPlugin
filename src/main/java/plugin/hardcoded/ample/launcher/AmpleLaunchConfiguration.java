@@ -24,10 +24,10 @@ public class AmpleLaunchConfiguration extends LaunchConfigurationDelegate {
 		);
 		if(project == null) return;
 		
-		System.out.println("Launch:");
-		System.out.println("project=[" + project_name + "]");
-		System.out.println("entry=[" + entry_file + "]");
-		System.out.println();
+//		System.out.println("Launch:");
+//		System.out.println("project=[" + project_name + "]");
+//		System.out.println("entry=[" + entry_file + "]");
+//		System.out.println();
 		
 		AmpleLauncher.run(project.getProject().getFile(entry_file), mode);
 	}
