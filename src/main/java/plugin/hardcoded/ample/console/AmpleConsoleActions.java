@@ -79,7 +79,6 @@ public class AmpleConsoleActions implements IConsolePageParticipant, IPropertyCh
 		};
 		removeAllLaunches.setDisabledImageDescriptor(AmplePreferences.DISABLED_REMOVEALL_LAUNCH);
 		removeAllLaunches.setEnabled(!console.hasActiveProcess());
-		
 	}
 	
 	public void propertyChange(PropertyChangeEvent event) {
